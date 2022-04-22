@@ -4,7 +4,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE NumericUnderscores #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 -- | Provides the 'TimeRep' type and related functions for representing
 -- time.
@@ -15,6 +14,7 @@ module Data.TimeRep
     -- * Conversions
     toSeconds,
     fromSeconds,
+    fromString,
 
     -- * Formatting
     formatTimeRep,
@@ -26,8 +26,7 @@ import Control.Applicative (Alternative (..))
 import Control.DeepSeq (NFData)
 import Data.Data (Data)
 import Data.Foldable (foldl')
-import Data.Text (Text)
-import Data.Text qualified as T
+import Data.List qualified as L
 import GHC.Generics (Generic)
 import GHC.Natural (Natural)
 import GHC.Read qualified as GRead
@@ -36,8 +35,19 @@ import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
 import Text.Read (Read (..))
 import Text.Read.Lex (Lexeme (..))
+import Text.Read qualified as TR
 
--- | Represents a relative time.
+-- | Represents a relative time with second granularity. This is primarily
+-- intended to be used with user supplied numeric values for convenience.
+--
+-- For example, suppose an application takes an argument representing a
+-- timeout. Asking for a natural number representing seconds is reasonable,
+-- but it has low UX if there is any chance this timeout could be somewhat
+-- large e.g. over an hour.
+--
+-- Instead, we can allow the user supply a "time string" like "1d2h3m4s".
+-- 'fromString' will parse this into 'TimeRep', and then the application can
+-- either convert this into seconds or keep as a 'TimeRep' as needed.
 --
 -- @since 0.1
 data TimeRep = MkTimeRep
@@ -61,7 +71,7 @@ data TimeRep = MkTimeRep
       Show
     )
   deriving anyclass
-    ( -- @since 0.1
+    ( -- | @since 0.1
       NFData
     )
 
@@ -93,47 +103,48 @@ fromSeconds seconds' = MkTimeRep d h m s
     (h, hoursRem) = daysRem `quotRem` secondsInHour
     (m, s) = hoursRem `quotRem` secondsInMinute
 
--- | Formats a 'TimeRep' to 'Text'.
+-- | Converts a 'String' into a 'TimeRep'.
 --
 -- @since 0.1
-formatTimeRep :: TimeRep -> Text
+fromString :: String -> Either String TimeRep
+fromString str = case RPC.readPrec_to_S read' RPC.minPrec str of
+  [(y, "")] -> Right y
+  _ -> Left $ "Could not read TimeRep from: " <> str
+  where
+    read' = readTimeStr +++ readSeconds <* RPC.lift RP.skipSpaces
+
+-- | Formats a 'TimeRep' to 'String'.
+--
+-- @since 0.1
+formatTimeRep :: TimeRep -> String
 formatTimeRep (MkTimeRep 0 0 0 0) = "0 seconds"
-formatTimeRep (MkTimeRep d h m s) = T.intercalate ", " vals
+formatTimeRep (MkTimeRep d h m s) = L.intercalate ", " vals
   where
     f acc (n, units)
       | n == 0 = acc
       | otherwise = pluralize n units : acc
     vals = foldl' f [] [(s, " second"), (m, " minute"), (h, " hour"), (d, " day")]
 
--- | For \(n \ge 0\) seconds, returns a 'Text' description of the days, hours,
+-- | For \(n \ge 0\) seconds, returns a 'String' description of the days, hours,
 -- minutes and seconds.
 --
 -- @since 0.1
-formatTime :: Natural -> Text
+formatTime :: Natural -> String
 formatTime = formatTimeRep . fromSeconds
 
-pluralize :: Natural -> Text -> Text
+pluralize :: Natural -> String -> String
 pluralize n txt
   | n == 1 = valUnit
   | otherwise = valUnit <> "s"
   where
-    valUnit = T.pack (show n) <> txt
+    valUnit = show n <> txt
 
--- | Seconds in a day: 86,400
---
--- @since 0.1
 secondsInDay :: Natural
 secondsInDay = 86_400
 
--- | Seconds in an hour: 3,600
---
--- @since 0.1
 secondsInHour :: Natural
 secondsInHour = 3_600
 
--- | Seconds in a minute: 60
---
--- @since 0.1
 secondsInMinute :: Natural
 secondsInMinute = 60
 
