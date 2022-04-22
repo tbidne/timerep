@@ -1,9 +1,11 @@
 {
   description = "A Template for Haskell Packages";
+  inputs.algebra-simple-src.url = "github:tbidne/algebra-simple/main";
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   outputs =
-    { flake-utils
+    { algebra-simple-src
+    , flake-utils
     , nixpkgs
     , self
     }:
@@ -27,6 +29,10 @@
               ormolu
               pkgs.zlib
             ]);
+          overrides = final: prev: with compiler; {
+            algebra-simple =
+              final.callCabal2nix "algebra-simple" algebra-simple-src { };
+          };
         };
     in
     {

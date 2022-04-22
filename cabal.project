@@ -6,3 +6,8 @@ package timerep
     -Weverything -Werror -Wno-safe -Wno-unsafe -Wno-missing-safe-haskell-mode
     -Wno-implicit-prelude -Wno-missing-local-signatures
     -Wno-missing-import-lists -Wno-missing-kind-signatures
+
+source-repository-package
+  type: git
+  location: https://github.com/tbidne/algebra-simple.git
+  tag: 13cd114bd46a7f76ba21138e03dd8066d5583a0c

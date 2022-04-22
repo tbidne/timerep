@@ -6,6 +6,8 @@ ghc-options:
              -Wno-missing-safe-haskell-mode -Wno-implicit-prelude
              -Wno-missing-local-signatures -Wno-missing-import-lists
              -Wno-missing-kind-signatures
-
+extra-deps:
+- git: https://github.com/tbidne/algebra-simple.git
+  commit: 13cd114bd46a7f76ba21138e03dd8066d5583a0c
 nix:
   shell-file: nix/stack.nix

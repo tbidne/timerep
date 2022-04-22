@@ -30,12 +30,12 @@ import Data.List qualified as L
 import GHC.Generics (Generic)
 import GHC.Natural (Natural)
 import GHC.Read qualified as GRead
+import Numeric.Algebra (AMonoid (..), ASemigroup (..))
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
 import Text.Read (Read (..))
 import Text.Read.Lex (Lexeme (..))
-import Text.Read qualified as TR
 
 -- | Represents a relative time with second granularity. This is primarily
 -- intended to be used with user supplied numeric values for convenience.
@@ -82,6 +82,15 @@ instance Ord TimeRep where
 -- @since 0.1
 instance Read TimeRep where
   readPrec = readRecord +++ readSeconds +++ readTimeStr
+
+-- @since 0.1
+instance ASemigroup TimeRep where
+  MkTimeRep d h m s .+. MkTimeRep d' h' m' s' =
+    MkTimeRep (d + d') (h + h') (m + m') (s + s')
+
+-- @since 0.1
+instance AMonoid TimeRep where
+  zero = MkTimeRep 0 0 0 0
 
 -- | Transforms a 'TimeRep' into 'Natural' seconds.
 --
