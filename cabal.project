@@ -3,9 +3,10 @@ packages: .
 package timerep
   tests: true
   ghc-options:
-    -Weverything -Werror -Wno-safe -Wno-unsafe -Wno-missing-safe-haskell-mode
-    -Wno-implicit-prelude -Wno-missing-local-signatures
-    -Wno-missing-import-lists -Wno-missing-kind-signatures
+    -Wall -Wcompat -Werror -Widentities -Wunused-binds
+    -Wincomplete-record-updates -Wincomplete-uni-patterns
+    -Wmissing-home-modules -Wmissing-export-lists -Wpartial-fields
+    -Wredundant-constraints -Wunused-packages -Wmissing-deriving-strategies
 
 source-repository-package
   type: git

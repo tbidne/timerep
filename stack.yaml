@@ -2,10 +2,11 @@ resolver: lts-19.4
 packages:
 - .
 ghc-options:
-  "$locals": -Weverything -Werror -Wno-safe -Wno-unsafe
-             -Wno-missing-safe-haskell-mode -Wno-implicit-prelude
-             -Wno-missing-local-signatures -Wno-missing-import-lists
-             -Wno-missing-kind-signatures
+  "$locals":
+    -Wall -Wcompat -Werror -Widentities -Wunused-binds
+    -Wincomplete-record-updates -Wincomplete-uni-patterns
+    -Wmissing-home-modules -Wmissing-export-lists -Wpartial-fields
+    -Wredundant-constraints -Wunused-packages -Wmissing-deriving-strategies
 extra-deps:
 - git: https://github.com/tbidne/algebra-simple.git
   commit: 13cd114bd46a7f76ba21138e03dd8066d5583a0c
