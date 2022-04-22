@@ -1,7 +1,7 @@
 cradle:
   cabal:
     - path: "./src"
-      component: "lib:timerep"
+      component: "lib:relative-time"
 
     - path: "./app/Main.hs"
-      component: "timerep:exe:timerep"
+      component: "relative-time:exe:relative-time"

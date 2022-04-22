@@ -1,4 +1,4 @@
-# Revision history for timerep
+# Revision history for relative-time
 
 ## 0.1 -- YYYY-mm-dd
 

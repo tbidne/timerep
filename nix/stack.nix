@@ -10,7 +10,7 @@ let
   compiler = pkgs.haskell.packages."${compilerVersion}";
 in
 pkgs.haskell.lib.buildStackProject {
-  name = "timerep";
+  name = "relative-time";
 
   buildInputs = with pkgs; [
     git

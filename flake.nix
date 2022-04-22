@@ -17,7 +17,7 @@
       mkPkg = returnShellEnv:
         compiler.developPackage {
           inherit returnShellEnv;
-          name = "timerep";
+          name = "relative-time";
           root = ./.;
           modifier = drv:
             pkgs.haskell.lib.addBuildTools drv (with compiler; [

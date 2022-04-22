@@ -5,11 +5,11 @@
 {-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE NumericUnderscores #-}
 
--- | Provides the 'TimeRep' type and related functions for representing
+-- | Provides the 'RelativeTime' type and related functions for representing
 -- time.
-module Data.TimeRep
+module Data.Time.Relative
   ( -- * Type
-    TimeRep (..),
+    RelativeTime (..),
 
     -- * Conversions
     toSeconds,
@@ -17,7 +17,7 @@ module Data.TimeRep
     fromString,
 
     -- * Formatting
-    formatTimeRep,
+    formatRelativeTime,
     formatTime,
   )
 where
@@ -46,11 +46,11 @@ import Text.Read.Lex (Lexeme (..))
 -- large e.g. over an hour.
 --
 -- Instead, we can allow the user supply a "time string" like "1d2h3m4s".
--- 'fromString' will parse this into 'TimeRep', and then the application can
--- either convert this into seconds or keep as a 'TimeRep' as needed.
+-- 'fromString' will parse this into 'RelativeTime', and then the application can
+-- either convert this into seconds or keep as a 'RelativeTime' as needed.
 --
 -- @since 0.1
-data TimeRep = MkTimeRep
+data RelativeTime = MkRelativeTime
   { -- | @since 0.1
     days :: !Natural,
     -- | @since 0.1
@@ -76,58 +76,58 @@ data TimeRep = MkTimeRep
     )
 
 -- @since 0.1
-instance Ord TimeRep where
+instance Ord RelativeTime where
   x <= y = toSeconds x <= toSeconds y
 
 -- @since 0.1
-instance Read TimeRep where
+instance Read RelativeTime where
   readPrec = readRecord +++ readSeconds +++ readTimeStr
 
 -- @since 0.1
-instance ASemigroup TimeRep where
-  MkTimeRep d h m s .+. MkTimeRep d' h' m' s' =
-    MkTimeRep (d + d') (h + h') (m + m') (s + s')
+instance ASemigroup RelativeTime where
+  MkRelativeTime d h m s .+. MkRelativeTime d' h' m' s' =
+    MkRelativeTime (d + d') (h + h') (m + m') (s + s')
 
 -- @since 0.1
-instance AMonoid TimeRep where
-  zero = MkTimeRep 0 0 0 0
+instance AMonoid RelativeTime where
+  zero = MkRelativeTime 0 0 0 0
 
--- | Transforms a 'TimeRep' into 'Natural' seconds.
+-- | Transforms a 'RelativeTime' into 'Natural' seconds.
 --
 -- @since 0.1
-toSeconds :: TimeRep -> Natural
-toSeconds (MkTimeRep d h m s) =
+toSeconds :: RelativeTime -> Natural
+toSeconds (MkRelativeTime d h m s) =
   d * secondsInDay
     + h * secondsInHour
     + m * secondsInMinute
     + s
 
--- | Transforms 'Natural' seconds into a 'TimeRep'.
+-- | Transforms 'Natural' seconds into a 'RelativeTime'.
 --
 -- @since 0.1
-fromSeconds :: Natural -> TimeRep
-fromSeconds seconds' = MkTimeRep d h m s
+fromSeconds :: Natural -> RelativeTime
+fromSeconds seconds' = MkRelativeTime d h m s
   where
     (d, daysRem) = seconds' `quotRem` secondsInDay
     (h, hoursRem) = daysRem `quotRem` secondsInHour
     (m, s) = hoursRem `quotRem` secondsInMinute
 
--- | Converts a 'String' into a 'TimeRep'.
+-- | Converts a 'String' into a 'RelativeTime'.
 --
 -- @since 0.1
-fromString :: String -> Either String TimeRep
+fromString :: String -> Either String RelativeTime
 fromString str = case RPC.readPrec_to_S read' RPC.minPrec str of
   [(y, "")] -> Right y
-  _ -> Left $ "Could not read TimeRep from: " <> str
+  _ -> Left $ "Could not read RelativeTime from: " <> str
   where
     read' = readTimeStr +++ readSeconds <* RPC.lift RP.skipSpaces
 
--- | Formats a 'TimeRep' to 'String'.
+-- | Formats a 'RelativeTime' to 'String'.
 --
 -- @since 0.1
-formatTimeRep :: TimeRep -> String
-formatTimeRep (MkTimeRep 0 0 0 0) = "0 seconds"
-formatTimeRep (MkTimeRep d h m s) = L.intercalate ", " vals
+formatRelativeTime :: RelativeTime -> String
+formatRelativeTime (MkRelativeTime 0 0 0 0) = "0 seconds"
+formatRelativeTime (MkRelativeTime d h m s) = L.intercalate ", " vals
   where
     f acc (n, units)
       | n == 0 = acc
@@ -139,7 +139,7 @@ formatTimeRep (MkTimeRep d h m s) = L.intercalate ", " vals
 --
 -- @since 0.1
 formatTime :: Natural -> String
-formatTime = formatTimeRep . fromSeconds
+formatTime = formatRelativeTime . fromSeconds
 
 pluralize :: Natural -> String -> String
 pluralize n txt
@@ -157,10 +157,10 @@ secondsInHour = 3_600
 secondsInMinute :: Natural
 secondsInMinute = 60
 
-readRecord :: ReadPrec TimeRep
+readRecord :: ReadPrec RelativeTime
 readRecord = GRead.parens $
   RPC.prec 11 $ do
-    GRead.expectP (Ident "MkTimeRep")
+    GRead.expectP (Ident "MkRelativeTime")
     GRead.expectP (Punc "{")
     d <- GRead.readField "days" (RPC.reset GRead.readPrec)
     GRead.expectP (Punc ",")
@@ -170,14 +170,14 @@ readRecord = GRead.parens $
     GRead.expectP (Punc ",")
     s <- GRead.readField "seconds" (RPC.reset GRead.readPrec)
     GRead.expectP (Punc "}")
-    pure $ MkTimeRep d h m s
+    pure $ MkRelativeTime d h m s
 
-readSeconds :: ReadPrec TimeRep
+readSeconds :: ReadPrec RelativeTime
 readSeconds = fromSeconds <$> readPrec
 
-readTimeStr :: ReadPrec TimeRep
+readTimeStr :: ReadPrec RelativeTime
 readTimeStr =
-  MkTimeRep
+  MkRelativeTime
     <$> readTimeOrZero 'd'
     <*> readTimeOrZero 'h'
     <*> readTimeOrZero 'm'

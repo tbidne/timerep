@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               timerep
+name:               relative-time
 version:            0.1
 license:            MIT
 license-file:       LICENSE
@@ -7,8 +7,8 @@ tested-with:        GHC ==8.10.7 || ==9.0.2 || ==9.2.2
 copyright:          2022 Thomas Bidne
 author:             Thomas Bidne
 maintainer:         tbidne@prontonmail.com
-homepage:           https://github.com/tbidne/timerep/
-bug-reports:        https://github.com/tbidne/timerep/issues
+homepage:           https://github.com/tbidne/relative-time/
+bug-reports:        https://github.com/tbidne/relative-time/issues
 synopsis:           Template
 description:        Template
 category:           Template
@@ -18,10 +18,10 @@ extra-source-files:
 
 source-repository head
   type:     git
-  location: https://github.com/tbidne/timerep
+  location: https://github.com/tbidne/relative-time
 
 library
-  exposed-modules:  Data.TimeRep
+  exposed-modules:  Data.Time.Relative
   build-depends:
     , algebra-simple  ^>=0.1
     , base            >=4.14.0.0 && <4.17
