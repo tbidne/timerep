@@ -1,0 +1,7 @@
+cradle:
+  cabal:
+    - path: "./src"
+      component: "lib:timerep"
+
+    - path: "./app/Main.hs"
+      component: "timerep:exe:timerep"
