@@ -19,7 +19,7 @@ module Data.Time.Relative
 
     -- * Formatting
     formatRelativeTime,
-    formatTime,
+    formatSeconds,
   )
 where
 
@@ -100,6 +100,14 @@ instance Semimodule RelativeTime Natural where
 
 -- | Transforms a 'RelativeTime' into 'Natural' seconds.
 --
+-- ==== __Examples__
+--
+-- >>> toSeconds $ MkRelativeTime 0 1 1 1
+-- 3661
+--
+-- >>> toSeconds $ MkRelativeTime 1 2 3 4
+-- 93784
+--
 -- @since 0.1
 toSeconds :: RelativeTime -> Natural
 toSeconds (MkRelativeTime d h m s) =
@@ -110,6 +118,14 @@ toSeconds (MkRelativeTime d h m s) =
 
 -- | Transforms 'Natural' seconds into a 'RelativeTime'.
 --
+-- ==== __Examples__
+--
+-- >>> fromSeconds 3661
+-- MkRelativeTime {days = 0, hours = 1, minutes = 1, seconds = 1}
+--
+-- >>> fromSeconds 93784
+-- MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4}
+--
 -- @since 0.1
 fromSeconds :: Natural -> RelativeTime
 fromSeconds seconds' = MkRelativeTime d h m s
@@ -118,17 +134,48 @@ fromSeconds seconds' = MkRelativeTime d h m s
     (h, hoursRem) = daysRem `quotRem` secondsInHour
     (m, s) = hoursRem `quotRem` secondsInMinute
 
--- | Converts a 'String' into a 'RelativeTime'.
+-- | Converts a 'String' into a 'RelativeTime'. Converts either a
+-- "time string" e.g. "1d2h3m4s" or numeric literal (interpreted
+-- as seconds).
+--
+-- ==== __Examples__
+--
+-- >>> fromString "1d2h3m4s"
+-- Right (MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4})
+--
+-- >>> fromString "1h1s"
+-- Right (MkRelativeTime {days = 0, hours = 1, minutes = 0, seconds = 1})
+--
+-- >>> fromString "0h15s"
+-- Right (MkRelativeTime {days = 0, hours = 0, minutes = 0, seconds = 15})
+--
+-- >>> fromString "3601"
+-- Right (MkRelativeTime {days = 0, hours = 1, minutes = 0, seconds = 1})
+--
+-- >>> fromString ""
+-- Right (MkRelativeTime {days = 0, hours = 0, minutes = 0, seconds = 0})
+--
+-- >>> fromString "1s1h"
+-- Left "Could not read RelativeTime from: 1s1h"
+--
+-- >>> fromString "cat"
+-- Left "Could not read RelativeTime from: cat"
 --
 -- @since 0.1
 fromString :: String -> Either String RelativeTime
-fromString str = case RPC.readPrec_to_S read' RPC.minPrec str of
-  [(y, "")] -> Right y
-  _ -> Left $ "Could not read RelativeTime from: " <> str
+fromString str =
+  case [x | (x, "") <- RPC.readPrec_to_S read' RPC.minPrec str] of
+    [y] -> Right y
+    _ -> Left $ "Could not read RelativeTime from: " <> str
   where
     read' = readTimeStr +++ readSeconds <* RPC.lift RP.skipSpaces
 
 -- | Formats a 'RelativeTime' to 'String'.
+--
+-- ==== __Examples__
+--
+-- >>> formatRelativeTime $ MkRelativeTime 1 2 0 3
+-- "1 day, 2 hours, 3 seconds"
 --
 -- @since 0.1
 formatRelativeTime :: RelativeTime -> String
@@ -143,9 +190,15 @@ formatRelativeTime (MkRelativeTime d h m s) = L.intercalate ", " vals
 -- | For \(n \ge 0\) seconds, returns a 'String' description of the days, hours,
 -- minutes and seconds.
 --
+-- ==== __Examples__
+--
+-- >>> formatSeconds 3623
+-- "1 hour, 23 seconds"
+--
+--
 -- @since 0.1
-formatTime :: Natural -> String
-formatTime = formatRelativeTime . fromSeconds
+formatSeconds :: Natural -> String
+formatSeconds = formatRelativeTime . fromSeconds
 
 pluralize :: Natural -> String -> String
 pluralize n txt
