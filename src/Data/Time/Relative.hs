@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE ImportQualifiedPost #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NumericUnderscores #-}
 
 -- | Provides the 'RelativeTime' type and related functions for representing
@@ -30,7 +31,7 @@ import Data.List qualified as L
 import GHC.Generics (Generic)
 import GHC.Natural (Natural)
 import GHC.Read qualified as GRead
-import Numeric.Algebra (AMonoid (..), ASemigroup (..))
+import Numeric.Algebra (AMonoid (..), ASemigroup (..), Semimodule (..))
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
@@ -91,6 +92,11 @@ instance ASemigroup RelativeTime where
 -- @since 0.1
 instance AMonoid RelativeTime where
   zero = MkRelativeTime 0 0 0 0
+
+-- @since 0.1
+instance Semimodule RelativeTime Natural where
+  MkRelativeTime d h m s .* k =
+    MkRelativeTime (d * k) (h * k) (m * k) (s * k)
 
 -- | Transforms a 'RelativeTime' into 'Natural' seconds.
 --
