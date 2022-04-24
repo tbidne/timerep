@@ -1,5 +1,3 @@
-{-# LANGUAGE ImportQualifiedPost #-}
-
 module Main (main) where
 
 import System.Environment qualified as Env
@@ -13,10 +11,21 @@ main = do
     Just "true" -> DocTest.doctest args
     _ -> putStrLn "*** Doctests Disabled ***"
   where
-    args = files
+    args = files <> exts
 
 files :: [String]
 files =
   [ "-isrc",
     "src/Data/Time/Relative.hs"
+  ]
+
+exts :: [String]
+exts =
+  [ "-XDeriveAnyClass",
+    "-XDeriveDataTypeable",
+    "-XDeriveGeneric",
+    "-XDerivingStrategies",
+    "-XImportQualifiedPost",
+    "-XMultiParamTypeClasses",
+    "-XNumericUnderscores"
   ]

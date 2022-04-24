@@ -20,7 +20,23 @@ source-repository head
   type:     git
   location: https://github.com/tbidne/relative-time
 
+common common-exts
+  default-extensions:
+    ApplicativeDo
+    DeriveAnyClass
+    DeriveDataTypeable
+    DeriveGeneric
+    DerivingStrategies
+    DerivingVia
+    ImportQualifiedPost
+    LambdaCase
+    MultiParamTypeClasses
+    NumericUnderscores
+    OverloadedStrings
+    TypeApplications
+
 library
+  import:           common-exts
   exposed-modules:  Data.Time.Relative
   build-depends:
     , algebra-simple  ^>=0.1
@@ -31,6 +47,7 @@ library
   default-language: Haskell2010
 
 test-suite doctest
+  import:           common-exts
   type:             exitcode-stdio-1.0
   main-is:          Main.hs
   build-depends:
