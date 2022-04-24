@@ -12,6 +12,10 @@ module Data.Time.Relative
   ( -- * Type
     RelativeTime (..),
 
+    -- * Operations
+    -- $operations
+    normalize,
+
     -- * Conversions
     toSeconds,
     fromSeconds,
@@ -97,6 +101,21 @@ instance AMonoid RelativeTime where
 instance Semimodule RelativeTime Natural where
   MkRelativeTime d h m s .* k =
     MkRelativeTime (d * k) (h * k) (m * k) (s * k)
+
+-- | Transforms the 'RelativeTime' into "canonical" form i.e. if we can reduce
+-- some unit (e.g. 75 seconds), then we do.
+--
+-- ==== __Examples__
+--
+-- >>> normalize $ MkRelativeTime 0 0 0 75
+-- MkRelativeTime {days = 0, hours = 0, minutes = 1, seconds = 15}
+--
+-- >>> normalize $ MkRelativeTime 2 23 59 61
+-- MkRelativeTime {days = 3, hours = 0, minutes = 0, seconds = 1}
+--
+-- @since 0.1
+normalize :: RelativeTime -> RelativeTime
+normalize = fromSeconds . toSeconds
 
 -- | Transforms a 'RelativeTime' into 'Natural' seconds.
 --
