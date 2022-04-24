@@ -116,7 +116,7 @@ gtimeStr = do
   toTake <- HG.integral (HR.linear 1 4)
   fullStrShuffled <- gAllUnitsShuffled
   let someUnits = take toTake fullStrShuffled
-  pure $ (unitToStr =<< sort someUnits)
+  pure (unitToStr =<< sort someUnits)
 
 data TimeStrUnit
   = Days Natural

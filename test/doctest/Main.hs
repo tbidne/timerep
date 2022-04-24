@@ -21,11 +21,16 @@ files =
 
 exts :: [String]
 exts =
-  [ "-XDeriveAnyClass",
+  [ "-XApplicativeDo",
+    "-XDeriveAnyClass",
     "-XDeriveDataTypeable",
     "-XDeriveGeneric",
     "-XDerivingStrategies",
+    "-XDerivingVia",
     "-XImportQualifiedPost",
+    "-XLambdaCase",
     "-XMultiParamTypeClasses",
-    "-XNumericUnderscores"
+    "-XNumericUnderscores",
+    "-XOverloadedStrings",
+    "-XTypeApplications"
   ]
