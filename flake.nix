@@ -32,6 +32,7 @@
           overrides = final: prev: with compiler; {
             algebra-simple =
               final.callCabal2nix "algebra-simple" algebra-simple-src { };
+            tasty-hedgehog = prev.tasty-hedgehog_1_2_0_0;
           };
         };
     in
