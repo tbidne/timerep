@@ -83,7 +83,7 @@ instance Read RelativeTime where
 -- @since 0.1
 instance ASemigroup RelativeTime where
   MkRelativeTime d h m s .+. MkRelativeTime d' h' m' s' =
-    MkRelativeTime (d + d') (h + h') (m + m') (s + s')
+    normalize $ MkRelativeTime (d + d') (h + h') (m + m') (s + s')
 
 -- @since 0.1
 instance AMonoid RelativeTime where
@@ -92,7 +92,24 @@ instance AMonoid RelativeTime where
 -- @since 0.1
 instance Semimodule RelativeTime Natural where
   MkRelativeTime d h m s .* k =
-    MkRelativeTime (d * k) (h * k) (m * k) (s * k)
+    normalize $ MkRelativeTime (d * k) (h * k) (m * k) (s * k)
+
+-- $operations
+-- Operations on 'RelativeTime'. In addition to the unary 'normalize', we also
+-- have instances from @algebra-simple@:
+--
+-- >>> let t1 = MkRelativeTime 1 2 3 4
+-- >>> let t2 = MkRelativeTime 2 3 4 5
+-- >>> t1 .+. t2
+-- MkRelativeTime {days = 3, hours = 5, minutes = 7, seconds = 9}
+--
+-- >>> t1 .+. zero
+-- MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4}
+--
+-- >>> t1 .* 2
+-- MkRelativeTime {days = 2, hours = 4, minutes = 6, seconds = 8}
+--
+-- These operations are 'normalize'd.
 
 -- | Transforms the 'RelativeTime' into "canonical" form i.e. if we can reduce
 -- some unit (e.g. 75 seconds), then we do.

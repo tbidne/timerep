@@ -34,3 +34,10 @@ jobs:
             "cabal update && \
              cabal build --write-ghc-environment-files=always && \
              RUN_DOCTEST=true cabal test doctest --test-show-details=direct"
+
+      - name: Unit Tests
+        run: |
+          nix-shell nix/ghc_9-0-2.nix --command \
+            "cabal update && \
+             cabal build --write-ghc-environment-files=always && \
+             MAX_RUNS=100000 cabal test unit --test-show-details=direct"
