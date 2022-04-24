@@ -9,9 +9,12 @@ author:             Thomas Bidne
 maintainer:         tbidne@prontonmail.com
 homepage:           https://github.com/tbidne/relative-time/
 bug-reports:        https://github.com/tbidne/relative-time/issues
-synopsis:           Template
-description:        Template
-category:           Template
+synopsis:           Defines a type for relative time with second precision.
+description:
+  Provides the 'Data.Time.RelativeTime' type, which is used to define a
+  relative time in terms of days, hours, minutes, and seconds.
+
+category:           Time
 extra-source-files:
   CHANGELOG.md
   README.md
