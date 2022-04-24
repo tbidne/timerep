@@ -3,5 +3,8 @@ cradle:
     - path: "./src"
       component: "lib:relative-time"
 
-    - path: "./app/Main.hs"
-      component: "relative-time:exe:relative-time"
+    - path: "./test/doctest"
+      component: "relative-time:test:doctest"
+
+    - path: "./test/unit"
+      component: "relative-time:test:unit"
