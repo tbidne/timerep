@@ -1,6 +1,6 @@
 {
   description = "A Template for Haskell Packages";
-  inputs.algebra-simple-src.url = "github:tbidne/algebra-simple?rev=227394af1a0fbeb75c33f9694d44deeb4d34dc9f";
+  inputs.algebra-simple-src.url = "github:tbidne/algebra-simple?rev=1b2bd9fd21ecf5ed6635cc5c14d06ab533950df3";
   inputs.nixpkgs.url = "github:nixos/nixpkgs?rev=1ffba9f2f683063c2b14c9f4d12c55ad5f4ed887";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   outputs =

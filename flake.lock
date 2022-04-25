@@ -6,17 +6,17 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1650714826,
-        "narHash": "sha256-l8MI7+nFm0KWZRt3c9lytJ2lUO2z1e4cJe0wNJiaJJQ=",
+        "lastModified": 1650882004,
+        "narHash": "sha256-AZD1AFMk7uk7kokvJxvkyHfUCS/kWvG2u7efXuYrybY=",
         "owner": "tbidne",
         "repo": "algebra-simple",
-        "rev": "227394af1a0fbeb75c33f9694d44deeb4d34dc9f",
+        "rev": "1b2bd9fd21ecf5ed6635cc5c14d06ab533950df3",
         "type": "github"
       },
       "original": {
         "owner": "tbidne",
         "repo": "algebra-simple",
-        "rev": "227394af1a0fbeb75c33f9694d44deeb4d34dc9f",
+        "rev": "1b2bd9fd21ecf5ed6635cc5c14d06ab533950df3",
         "type": "github"
       }
     },
