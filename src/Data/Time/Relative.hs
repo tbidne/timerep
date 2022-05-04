@@ -29,7 +29,15 @@ import Data.List qualified as L
 import GHC.Generics (Generic)
 import GHC.Natural (Natural)
 import GHC.Read qualified as GRead
-import Numeric.Algebra (AMonoid (..), ASemigroup (..), Semimodule (..))
+import Numeric.Algebra
+  ( AMonoid (..),
+    ASemigroup (..),
+    MSemiSpace (..),
+    SemivectorSpace,
+    MSpace (..),
+    NonZero (..),
+    Semimodule,
+  )
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
@@ -102,9 +110,20 @@ instance AMonoid RelativeTime where
   zero = MkRelativeTime 0 0 0 0
 
 -- | @since 0.1
-instance Semimodule RelativeTime Natural where
+instance MSemiSpace RelativeTime Natural where
   MkRelativeTime d h m s .* k =
     normalize $ MkRelativeTime (d * k) (h * k) (m * k) (s * k)
+
+-- | @since 0.1
+instance MSpace RelativeTime Natural where
+  MkRelativeTime d h m s .% MkNonZero k =
+    normalize $ MkRelativeTime (d `div` k) (h `div` k) (m `div` k) (s `div` k)
+
+-- | @since 0.1
+instance Semimodule RelativeTime Natural
+
+-- | @since 0.1
+instance SemivectorSpace RelativeTime Natural
 
 -- $operations
 -- Operations on 'RelativeTime'. In addition to the unary 'normalize', we also
