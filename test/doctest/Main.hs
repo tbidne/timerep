@@ -22,15 +22,19 @@ files =
 exts :: [String]
 exts =
   [ "-XApplicativeDo",
+    "-XDataKinds",
     "-XDeriveAnyClass",
     "-XDeriveDataTypeable",
     "-XDeriveGeneric",
     "-XDerivingStrategies",
     "-XDerivingVia",
+    "-XFlexibleInstances",
+    "-XGADTs",
     "-XImportQualifiedPost",
     "-XLambdaCase",
     "-XMultiParamTypeClasses",
     "-XNumericUnderscores",
     "-XOverloadedStrings",
+    "-XStandaloneKindSignatures",
     "-XTypeApplications"
   ]

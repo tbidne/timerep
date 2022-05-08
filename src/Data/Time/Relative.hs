@@ -1,3 +1,5 @@
+{-# LANGUAGE UndecidableInstances #-}
+
 -- | Provides the 'RelativeTime' type and related functions for representing
 -- time.
 --
@@ -25,6 +27,7 @@ import Control.Applicative (Alternative (..))
 import Control.DeepSeq (NFData)
 import Data.Data (Data)
 import Data.Foldable (foldl')
+import Data.Kind (Type)
 import Data.List qualified as L
 import GHC.Generics (Generic)
 import GHC.Natural (Natural)
@@ -33,11 +36,12 @@ import Numeric.Algebra
   ( AMonoid (..),
     ASemigroup (..),
     MSemiSpace (..),
-    SemivectorSpace,
     MSpace (..),
     NonZero (..),
     Semimodule,
+    SemivectorSpace,
   )
+import Optics.Core (A_Lens, LabelOptic (..), lens)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
@@ -67,6 +71,7 @@ import Text.Read.Lex (Lexeme (..))
 -- MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4}
 --
 -- @since 0.1
+type RelativeTime :: Type
 data RelativeTime = MkRelativeTime
   { -- | @since 0.1
     days :: !Natural,
@@ -91,6 +96,22 @@ data RelativeTime = MkRelativeTime
     ( -- | @since 0.1
       NFData
     )
+
+-- | @since 0.1
+instance (k ~ A_Lens) => LabelOptic "days" k RelativeTime RelativeTime Natural Natural where
+  labelOptic = lens days (\rt d -> rt {days = d})
+
+-- | @since 0.1
+instance (k ~ A_Lens) => LabelOptic "hours" k RelativeTime RelativeTime Natural Natural where
+  labelOptic = lens hours (\rt d -> rt {hours = d})
+
+-- | @since 0.1
+instance (k ~ A_Lens) => LabelOptic "minutes" k RelativeTime RelativeTime Natural Natural where
+  labelOptic = lens minutes (\rt d -> rt {minutes = d})
+
+-- | @since 0.1
+instance (k ~ A_Lens) => LabelOptic "seconds" k RelativeTime RelativeTime Natural Natural where
+  labelOptic = lens seconds (\rt d -> rt {seconds = d})
 
 -- | @since 0.1
 instance Ord RelativeTime where

@@ -1,7 +1,6 @@
 packages: .
 
 package relative-time
-  tests: true
   ghc-options:
     -Wall -Wcompat -Werror -Widentities -Wunused-binds
     -Wincomplete-record-updates -Wincomplete-uni-patterns
