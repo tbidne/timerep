@@ -233,7 +233,7 @@ fromSeconds seconds' = MkRelativeTime d h m s
 -- Right (MkRelativeTime {days = 0, hours = 1, minutes = 0, seconds = 1})
 --
 -- >>> fromString ""
--- Right (MkRelativeTime {days = 0, hours = 0, minutes = 0, seconds = 0})
+-- Left "Could not read RelativeTime from: "
 --
 -- >>> fromString "1s1h"
 -- Left "Could not read RelativeTime from: 1s1h"
@@ -315,12 +315,16 @@ readSeconds :: ReadPrec RelativeTime
 readSeconds = fromSeconds <$> readPrec
 
 readTimeStr :: ReadPrec RelativeTime
-readTimeStr =
-  MkRelativeTime
-    <$> readTimeOrZero 'd'
-    <*> readTimeOrZero 'h'
-    <*> readTimeOrZero 'm'
-    <*> readTimeOrZero 's'
+readTimeStr = do
+  s <- RPC.look
+  if null s
+    then RPC.pfail
+    else
+      MkRelativeTime
+        <$> readTimeOrZero 'd'
+        <*> readTimeOrZero 'h'
+        <*> readTimeOrZero 'm'
+        <*> readTimeOrZero 's'
 
 readTimeOrZero :: Char -> ReadPrec Natural
 readTimeOrZero c =
