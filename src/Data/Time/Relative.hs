@@ -11,6 +11,7 @@ module Data.Time.Relative
     -- * Operations
     -- $operations
     normalize,
+    diffRelativeTime,
 
     -- * Conversions
     toSeconds,
@@ -41,31 +42,52 @@ import Numeric.Algebra
     Semimodule,
     SemivectorSpace,
   )
-import Optics.Core (A_Lens, LabelOptic (..), lens)
+import Optics.Core (A_Lens, An_Iso, LabelOptic (..), iso, lens)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
 import Text.Read (Read (..))
 import Text.Read.Lex (Lexeme (..))
 
+-- $setup
+-- >>> let sleepSeconds _ = pure ()
+
 -- | Represents a relative time with second precision. This is primarily
--- intended to be used with user supplied numeric values for convenience.
+-- intended to be used when an application defines some numeric value in
+-- terms of seconds (e.g. timeout, poll interval) but the values may be
+-- large enough that literal seconds are inconvenient / error prone.
 --
 -- For example, suppose an application takes an argument representing a
 -- timeout. Asking for a natural number representing seconds is reasonable,
 -- but it has low UX if there is any chance this timeout could be somewhat
 -- large e.g. over an hour.
 --
--- Instead, we can allow the user to supply a "time string" like "1d2h3m4s".
--- 'fromString' will parse this into 'RelativeTime', and then the application can
--- either convert this into seconds or keep as a 'RelativeTime' as needed.
+-- 'RelativeTime' makes this more convenient by allowing one to supply larger
+-- values in terms of days, hours, minutes, and seconds, and includes
+-- conversion functions. For instance, if we want to put a thread to sleep
+-- for an hour, we could do:
 --
--- ==== __Instances__
+-- >>> :{
+-- sleep1Hour :: IO ()
+-- sleep1Hour = do
+--   let rt = zero { hours = 1 }
+--   -- sleepSeconds :: Natural -> IO ()
+--   sleepSeconds $ toSeconds rt
+-- :}
+--
+-- Furthermore, we provide convenient string parsing (for e.g. user config)
+-- in the form of "time strings" like "1s2h3m4s". 'fromString' will parse
+-- this into 'RelativeTime', and then the application can either convert this
+-- into seconds or keep as a 'RelativeTime' as needed.
+--
+-- ==== __Instance Details__
 --
 -- * 'Eq'/'Ord': Terms are converted first to seconds then compared i.e. we
 --   declare an equivalence class in terms of the "total time" represented.
 -- * 'Read': Parses the same strings as 'fromString'. Additionally, we also
 --   parse the output of 'Show' i.e. the derived instance.
+-- * Optics: In addition to the obvious lenses, we also provide an 'Iso'
+--   between 'RelativeTime' and 'Natural' seconds.
 --
 -- >>> read @RelativeTime "MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4}"
 -- MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4}
@@ -114,6 +136,10 @@ instance (k ~ A_Lens) => LabelOptic "seconds" k RelativeTime RelativeTime Natura
   labelOptic = lens seconds (\rt d -> rt {seconds = d})
 
 -- | @since 0.1
+instance (k ~ An_Iso) => LabelOptic "secondsIso" k RelativeTime RelativeTime Natural Natural where
+  labelOptic = iso toSeconds fromSeconds
+
+-- | @since 0.1
 instance Ord RelativeTime where
   x <= y = toSeconds x <= toSeconds y
 
@@ -147,9 +173,11 @@ instance Semimodule RelativeTime Natural
 instance SemivectorSpace RelativeTime Natural
 
 -- $operations
--- Operations on 'RelativeTime'. In addition to the unary 'normalize', we also
--- have instances from @algebra-simple@:
+-- Operations on 'RelativeTime'. In addition to the following operations, we
+-- also have instances from @algebra-simple@:
 --
+-- >>> -- Addition
+-- >>> import Numeric.Algebra.Additive.ASemigroup (ASemigroup ((.+.)))
 -- >>> let t1 = MkRelativeTime 1 2 3 4
 -- >>> let t2 = MkRelativeTime 2 3 4 5
 -- >>> t1 .+. t2
@@ -158,8 +186,16 @@ instance SemivectorSpace RelativeTime Natural
 -- >>> t1 .+. zero
 -- MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4}
 --
+-- >>> -- Scalar multiplication
+-- >>> import Numeric.Algebra.Space.MSemiSpace (MSemiSpace ((.*)))
 -- >>> t1 .* 2
 -- MkRelativeTime {days = 2, hours = 4, minutes = 6, seconds = 8}
+--
+-- >>> -- Scalar division
+-- >>> import Numeric.Algebra.Space.MSpace (MSpace ((.%)))
+-- >>> import Numeric.Data.NonZero (unsafeNonZero)
+-- >>> t1 .% unsafeNonZero 2
+-- MkRelativeTime {days = 0, hours = 1, minutes = 1, seconds = 2}
 --
 -- These operations are 'normalize'd.
 
@@ -177,6 +213,25 @@ instance SemivectorSpace RelativeTime Natural
 -- @since 0.1
 normalize :: RelativeTime -> RelativeTime
 normalize = fromSeconds . toSeconds
+
+-- | Returns the absolute difference between two relative times.
+-- Despite 'Natural' subtraction being partial, 'diffRelativeTime' is total.
+--
+-- ==== __Examples__
+--
+-- >>> diffRelativeTime (MkRelativeTime 2 0 0 4) (MkRelativeTime 1 0 0 2)
+-- MkRelativeTime {days = 1, hours = 0, minutes = 0, seconds = 2}
+--
+-- >>> diffRelativeTime (MkRelativeTime 3 6 2 41) (MkRelativeTime 8 2 4 1)
+-- MkRelativeTime {days = 4, hours = 20, minutes = 1, seconds = 20}
+--
+-- @since 0.1
+diffRelativeTime :: RelativeTime -> RelativeTime -> RelativeTime
+diffRelativeTime r1 r2 = fromSeconds $ toSeconds r1 `diffNat` toSeconds r2
+  where
+    diffNat n1 n2
+      | n1 >= n2 = n1 - n2
+      | otherwise = n2 - n1
 
 -- | Transforms a 'RelativeTime' into 'Natural' seconds.
 --
