@@ -118,23 +118,53 @@ data RelativeTime = MkRelativeTime
     )
 
 -- | @since 0.1
-instance (k ~ A_Lens) => LabelOptic "days" k RelativeTime RelativeTime Natural Natural where
+instance
+  ( k ~ A_Lens,
+    a ~ Natural,
+    b ~ Natural
+  ) =>
+  LabelOptic "days" k RelativeTime RelativeTime a b
+  where
   labelOptic = lens days (\rt d -> rt {days = d})
 
 -- | @since 0.1
-instance (k ~ A_Lens) => LabelOptic "hours" k RelativeTime RelativeTime Natural Natural where
+instance
+  ( k ~ A_Lens,
+    a ~ Natural,
+    b ~ Natural
+  ) =>
+  LabelOptic "hours" k RelativeTime RelativeTime a b
+  where
   labelOptic = lens hours (\rt d -> rt {hours = d})
 
 -- | @since 0.1
-instance (k ~ A_Lens) => LabelOptic "minutes" k RelativeTime RelativeTime Natural Natural where
+instance
+  ( k ~ A_Lens,
+    a ~ Natural,
+    b ~ Natural
+  ) =>
+  LabelOptic "minutes" k RelativeTime RelativeTime a b
+  where
   labelOptic = lens minutes (\rt d -> rt {minutes = d})
 
 -- | @since 0.1
-instance (k ~ A_Lens) => LabelOptic "seconds" k RelativeTime RelativeTime Natural Natural where
+instance
+  ( k ~ A_Lens,
+    a ~ Natural,
+    b ~ Natural
+  ) =>
+  LabelOptic "seconds" k RelativeTime RelativeTime a b
+  where
   labelOptic = lens seconds (\rt d -> rt {seconds = d})
 
 -- | @since 0.1
-instance (k ~ An_Iso) => LabelOptic "secondsIso" k RelativeTime RelativeTime Natural Natural where
+instance
+  ( k ~ An_Iso,
+    a ~ Natural,
+    b ~ Natural
+  ) =>
+  LabelOptic "secondsIso" k RelativeTime RelativeTime a b
+  where
   labelOptic = iso toSeconds fromSeconds
 
 -- | @since 0.1
