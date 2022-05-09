@@ -23,6 +23,8 @@ props =
   Tasty.testGroup
     "Properties"
     [ testToFromId,
+      testEq,
+      testOrd,
       testNormalize,
       testDiff,
       testReadShowId,
@@ -39,6 +41,33 @@ testToFromId = Tasty.askOption $ \(MkMaxRuns limit) ->
         seconds' === f seconds'
   where
     f = Relative.toSeconds . Relative.fromSeconds
+
+testEq :: TestTree
+testEq = Tasty.askOption $ \(MkMaxRuns limit) ->
+  TastyH.testPropertyNamed "Eq is determined by seconds" "testEq" $
+    H.withTests limit $
+      H.property $ do
+        r1 <- H.forAll grelativeTime
+        r2 <- H.forAll grelativeTime
+        let r1' = Relative.toSeconds r1
+        let r2' = Relative.toSeconds r2
+        H.annotateShow r1'
+        H.annotateShow r2'
+        (r1 == r2) === (r1' == r2')
+        r1 === Relative.normalize r1
+
+testOrd :: TestTree
+testOrd = Tasty.askOption $ \(MkMaxRuns limit) ->
+  TastyH.testPropertyNamed "Ord is determined by seconds" "testOrd" $
+    H.withTests limit $
+      H.property $ do
+        r1 <- H.forAll grelativeTime
+        r2 <- H.forAll grelativeTime
+        let r1' = Relative.toSeconds r1
+        let r2' = Relative.toSeconds r2
+        H.annotateShow r1'
+        H.annotateShow r2'
+        (r1 <= r2) === (r1' <= r2')
 
 testNormalize :: TestTree
 testNormalize = Tasty.askOption $ \(MkMaxRuns limit) ->
