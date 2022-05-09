@@ -11,6 +11,7 @@ import Hedgehog (Gen, (===))
 import Hedgehog qualified as H
 import Hedgehog.Gen qualified as HG
 import Hedgehog.Range qualified as HR
+import Numeric.Algebra (AMonoid (..), ASemigroup (..))
 import Test.Tasty (TestTree)
 import Test.Tasty qualified as Tasty
 import Test.Tasty.Hedgehog qualified as TastyH
@@ -23,6 +24,7 @@ props =
     "Properties"
     [ testToFromId,
       testNormalize,
+      testDiff,
       testReadShowId,
       testRead,
       testFromString
@@ -49,6 +51,20 @@ testNormalize = Tasty.askOption $ \(MkMaxRuns limit) ->
         H.assert $ h < 24
         H.assert $ m < 60
         H.assert $ s < 60
+
+testDiff :: TestTree
+testDiff = Tasty.askOption $ \(MkMaxRuns limit) ->
+  TastyH.testPropertyNamed "diffRelativeTime additive algebra" "testDiff" $
+    H.withTests limit $
+      H.property $ do
+        r1 <- H.forAll grelativeTime
+        r2 <- H.forAll grelativeTime
+        let result = Relative.diffRelativeTime r1 r2
+        H.annotateShow result
+        if
+            | r1 > r2 -> r1 === r2 .+. result
+            | r2 > r1 -> r2 === r1 .+. result
+            | otherwise -> zero === result
 
 testReadShowId :: TestTree
 testReadShowId = Tasty.askOption $ \(MkMaxRuns limit) ->

@@ -37,6 +37,7 @@ common common-exts
     ImportQualifiedPost
     LambdaCase
     MultiParamTypeClasses
+    MultiWayIf
     NumericUnderscores
     OverloadedStrings
     StandaloneKindSignatures
@@ -74,6 +75,7 @@ test-suite unit
     Unit.MaxRuns
 
   build-depends:
+    , algebra-simple
     , base
     , hedgehog        >=1.0.2   && <1.2
     , relative-time

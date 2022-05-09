@@ -106,8 +106,6 @@ data RelativeTime = MkRelativeTime
   }
   deriving stock
     ( -- | @since 0.1
-      Eq,
-      -- | @since 0.1
       Data,
       -- | @since 0.1
       Generic,
@@ -138,6 +136,10 @@ instance (k ~ A_Lens) => LabelOptic "seconds" k RelativeTime RelativeTime Natura
 -- | @since 0.1
 instance (k ~ An_Iso) => LabelOptic "secondsIso" k RelativeTime RelativeTime Natural Natural where
   labelOptic = iso toSeconds fromSeconds
+
+-- | @since 0.1
+instance Eq RelativeTime where
+  x == y = toSeconds x == toSeconds y
 
 -- | @since 0.1
 instance Ord RelativeTime where
