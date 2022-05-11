@@ -1,5 +1,5 @@
 module Unit.Data.Time.Relative
-  ( props,
+  ( tests,
   )
 where
 
@@ -14,9 +14,60 @@ import Hedgehog.Range qualified as HR
 import Numeric.Algebra (AMonoid (..), ASemigroup (..))
 import Test.Tasty (TestTree)
 import Test.Tasty qualified as Tasty
+import Test.Tasty.HUnit (testCase, (@=?))
 import Test.Tasty.Hedgehog qualified as TastyH
 import Text.Read qualified as TR
 import Unit.MaxRuns (MaxRuns (..))
+
+tests :: TestTree
+tests =
+  Tasty.testGroup
+    "Unit"
+    [ specs,
+      props
+    ]
+
+specs :: TestTree
+specs =
+  Tasty.testGroup
+    "Specs"
+    [ testZero,
+      testSingular,
+      testPluralMin,
+      testPluralMinSec,
+      testHour,
+      testDay
+    ]
+
+testZero :: TestTree
+testZero =
+  testCase "0 should 0 seconds" $
+    "0 seconds" @=? Relative.formatSeconds 0
+
+testSingular :: TestTree
+testSingular =
+  testCase "61 should be singular minute and seconds" $
+    "1 minute, 1 second" @=? Relative.formatSeconds 61
+
+testPluralMin :: TestTree
+testPluralMin =
+  testCase "180 should be plural minutes" $
+    "3 minutes" @=? Relative.formatSeconds 180
+
+testPluralMinSec :: TestTree
+testPluralMinSec =
+  testCase "200 should pluralize minutes and seconds" $
+    "3 minutes, 20 seconds" @=? Relative.formatSeconds 200
+
+testHour :: TestTree
+testHour =
+  testCase "4000 should include hours" $
+    "1 hour, 6 minutes, 40 seconds" @=? Relative.formatSeconds 4_000
+
+testDay :: TestTree
+testDay =
+  testCase "100,000 should include days" $
+    "1 day, 3 hours, 46 minutes, 40 seconds" @=? Relative.formatSeconds 100_000
 
 props :: TestTree
 props =

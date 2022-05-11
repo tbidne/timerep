@@ -21,10 +21,9 @@ main = do
         Nothing -> SysEx.die $ "*** MAX_RUNS is not a non-negative integer: " <> mr
         Just x -> pure $ fromIntegral @Int x
 
-  let maxRunProps = Tasty.localOption (MkMaxRuns maxRuns) Relative.props
+  let maxRunProps = Tasty.localOption (MkMaxRuns maxRuns) Relative.tests
 
-  Tasty.defaultMainWithIngredients ingredients $
-    Tasty.testGroup "Unit tests" [maxRunProps]
+  Tasty.defaultMainWithIngredients ingredients maxRunProps
   where
     parseMaxRuns = M.mfilter (> 0) . TR.readMaybe
     ingredients = Tasty.includingOptions [Option @MaxRuns Proxy] : Tasty.defaultIngredients
