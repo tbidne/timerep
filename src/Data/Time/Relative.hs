@@ -190,13 +190,11 @@ instance AMonoid RelativeTime where
 
 -- | @since 0.1
 instance MSemiSpace RelativeTime Natural where
-  MkRelativeTime d h m s .* k =
-    normalize $ MkRelativeTime (d * k) (h * k) (m * k) (s * k)
+  rt .* k = fromSeconds $ toSeconds rt * k
 
 -- | @since 0.1
 instance MSpace RelativeTime Natural where
-  MkRelativeTime d h m s .% MkNonZero k =
-    normalize $ MkRelativeTime (d `div` k) (h `div` k) (m `div` k) (s `div` k)
+  rt .% MkNonZero k = fromSeconds $ toSeconds rt `div` k
 
 -- | @since 0.1
 instance Semimodule RelativeTime Natural
@@ -227,7 +225,7 @@ instance SemivectorSpace RelativeTime Natural
 -- >>> import Numeric.Algebra.Space.MSpace (MSpace ((.%)))
 -- >>> import Numeric.Data.NonZero (unsafeNonZero)
 -- >>> t1 .% unsafeNonZero 2
--- MkRelativeTime {days = 0, hours = 1, minutes = 1, seconds = 2}
+-- MkRelativeTime {days = 0, hours = 13, minutes = 1, seconds = 32}
 --
 -- These operations are 'normalize'd.
 
