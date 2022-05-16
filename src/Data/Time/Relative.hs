@@ -86,8 +86,8 @@ import Text.Read.Lex (Lexeme (..))
 --   declare an equivalence class in terms of the "total time" represented.
 -- * 'Read': Parses the same strings as 'fromString'. Additionally, we also
 --   parse the output of 'Show' i.e. the derived instance.
--- * Optics: In addition to the obvious lenses, we also provide an 'Iso'
---   between 'RelativeTime' and 'Natural' seconds.
+-- * Optics: In addition to the obvious lenses, we also provide an
+--   'Optics.Core.Iso' between 'RelativeTime' and 'Natural' seconds.
 --
 -- >>> read @RelativeTime "MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4}"
 -- MkRelativeTime {days = 1, hours = 2, minutes = 3, seconds = 4}
@@ -126,6 +126,7 @@ instance
   LabelOptic "days" k RelativeTime RelativeTime a b
   where
   labelOptic = lens days (\rt d -> rt {days = d})
+  {-# INLINEABLE labelOptic #-}
 
 -- | @since 0.1
 instance
@@ -136,6 +137,7 @@ instance
   LabelOptic "hours" k RelativeTime RelativeTime a b
   where
   labelOptic = lens hours (\rt d -> rt {hours = d})
+  {-# INLINEABLE labelOptic #-}
 
 -- | @since 0.1
 instance
@@ -146,6 +148,7 @@ instance
   LabelOptic "minutes" k RelativeTime RelativeTime a b
   where
   labelOptic = lens minutes (\rt d -> rt {minutes = d})
+  {-# INLINEABLE labelOptic #-}
 
 -- | @since 0.1
 instance
@@ -156,6 +159,7 @@ instance
   LabelOptic "seconds" k RelativeTime RelativeTime a b
   where
   labelOptic = lens seconds (\rt d -> rt {seconds = d})
+  {-# INLINEABLE labelOptic #-}
 
 -- | @since 0.1
 instance
@@ -166,35 +170,43 @@ instance
   LabelOptic "secondsIso" k RelativeTime RelativeTime a b
   where
   labelOptic = iso toSeconds fromSeconds
+  {-# INLINEABLE labelOptic #-}
 
 -- | @since 0.1
 instance Eq RelativeTime where
   x == y = toSeconds x == toSeconds y
+  {-# INLINEABLE (==) #-}
 
 -- | @since 0.1
 instance Ord RelativeTime where
   x <= y = toSeconds x <= toSeconds y
+  {-# INLINEABLE (<=) #-}
 
 -- | @since 0.1
 instance Read RelativeTime where
   readPrec = readRecord +++ readSeconds +++ readTimeStr
+  {-# INLINEABLE readPrec #-}
 
 -- | @since 0.1
 instance ASemigroup RelativeTime where
   MkRelativeTime d h m s .+. MkRelativeTime d' h' m' s' =
     normalize $ MkRelativeTime (d + d') (h + h') (m + m') (s + s')
+  {-# INLINEABLE (.+.) #-}
 
 -- | @since 0.1
 instance AMonoid RelativeTime where
   zero = MkRelativeTime 0 0 0 0
+  {-# INLINEABLE zero #-}
 
 -- | @since 0.1
 instance MSemiSpace RelativeTime Natural where
   rt .* k = fromSeconds $ toSeconds rt * k
+  {-# INLINEABLE (.*) #-}
 
 -- | @since 0.1
 instance MSpace RelativeTime Natural where
   rt .% MkNonZero k = fromSeconds $ toSeconds rt `div` k
+  {-# INLINEABLE (.%) #-}
 
 -- | @since 0.1
 instance Semimodule RelativeTime Natural
@@ -243,6 +255,7 @@ instance SemivectorSpace RelativeTime Natural
 -- @since 0.1
 normalize :: RelativeTime -> RelativeTime
 normalize = fromSeconds . toSeconds
+{-# INLINEABLE normalize #-}
 
 -- | Returns the absolute difference between two relative times.
 -- Despite 'Natural' subtraction being partial, 'diffRelativeTime' is total.
@@ -262,6 +275,7 @@ diffRelativeTime r1 r2 = fromSeconds $ toSeconds r1 `diffNat` toSeconds r2
     diffNat n1 n2
       | n1 >= n2 = n1 - n2
       | otherwise = n2 - n1
+{-# INLINEABLE diffRelativeTime #-}
 
 -- | Transforms a 'RelativeTime' into 'Natural' seconds.
 --
@@ -280,6 +294,7 @@ toSeconds (MkRelativeTime d h m s) =
     + h * secondsInHour
     + m * secondsInMinute
     + s
+{-# INLINEABLE toSeconds #-}
 
 -- | Transforms 'Natural' seconds into a 'RelativeTime'.
 --
@@ -298,6 +313,7 @@ fromSeconds seconds' = MkRelativeTime d h m s
     (d, daysRem) = seconds' `quotRem` secondsInDay
     (h, hoursRem) = daysRem `quotRem` secondsInHour
     (m, s) = hoursRem `quotRem` secondsInMinute
+{-# INLINEABLE fromSeconds #-}
 
 -- | Converts a string into a 'RelativeTime'. Converts either a
 -- "time string" e.g. "1d2h3m4s" or numeric literal (interpreted
@@ -334,6 +350,7 @@ fromString str =
     _ -> Left $ "Could not read RelativeTime from: " <> str
   where
     read' = readTimeStr +++ readSeconds <* RPC.lift RP.skipSpaces
+{-# INLINEABLE fromString #-}
 
 -- | Formats a 'RelativeTime' to string.
 --
@@ -351,6 +368,7 @@ formatRelativeTime (MkRelativeTime d h m s) = L.intercalate ", " vals
       | n == 0 = acc
       | otherwise = pluralize n units : acc
     vals = foldl' f [] [(s, " second"), (m, " minute"), (h, " hour"), (d, " day")]
+{-# INLINEABLE formatRelativeTime #-}
 
 -- | For \(n \ge 0\) seconds, returns a string description of the days, hours,
 -- minutes and seconds.
@@ -364,6 +382,7 @@ formatRelativeTime (MkRelativeTime d h m s) = L.intercalate ", " vals
 -- @since 0.1
 formatSeconds :: Natural -> String
 formatSeconds = formatRelativeTime . fromSeconds
+{-# INLINEABLE formatSeconds #-}
 
 pluralize :: Natural -> String -> String
 pluralize n txt
@@ -371,15 +390,19 @@ pluralize n txt
   | otherwise = valUnit <> "s"
   where
     valUnit = show n <> txt
+{-# INLINEABLE pluralize #-}
 
 secondsInDay :: Natural
 secondsInDay = 86_400
+{-# INLINEABLE secondsInDay #-}
 
 secondsInHour :: Natural
 secondsInHour = 3_600
+{-# INLINEABLE secondsInHour #-}
 
 secondsInMinute :: Natural
 secondsInMinute = 60
+{-# INLINEABLE secondsInMinute #-}
 
 readRecord :: ReadPrec RelativeTime
 readRecord = GRead.parens $
@@ -395,9 +418,11 @@ readRecord = GRead.parens $
     s <- GRead.readField "seconds" (RPC.reset GRead.readPrec)
     GRead.expectP (Punc "}")
     pure $ MkRelativeTime d h m s
+{-# INLINEABLE readRecord #-}
 
 readSeconds :: ReadPrec RelativeTime
 readSeconds = fromSeconds <$> readPrec
+{-# INLINEABLE readSeconds #-}
 
 readTimeStr :: ReadPrec RelativeTime
 readTimeStr = do
@@ -410,10 +435,13 @@ readTimeStr = do
         <*> readTimeOrZero 'h'
         <*> readTimeOrZero 'm'
         <*> readTimeOrZero 's'
+{-# INLINEABLE readTimeStr #-}
 
 readTimeOrZero :: Char -> ReadPrec Natural
 readTimeOrZero c =
   readTimeWithUnit c <|> pure 0
+{-# INLINEABLE readTimeOrZero #-}
 
 readTimeWithUnit :: Char -> ReadPrec Natural
 readTimeWithUnit c = readPrec <* RPC.lift (RP.char c)
+{-# INLINEABLE readTimeWithUnit #-}
