@@ -308,6 +308,7 @@ fromSeconds seconds' = MkRelativeTime d h m s
 -- | Isomorphism between 'Natural' seconds and 'RelativeTime'.
 --
 -- __Examples__
+--
 -- >>> import Optics.Core ((^.), (#))
 -- >>> (zero { days = 1, hours = 2 }) ^. secondsIso
 -- 93600
