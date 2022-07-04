@@ -43,7 +43,7 @@ import Numeric.Algebra
     Semimodule,
     SemivectorSpace,
   )
-import Optics.Core (A_Lens, LabelOptic (..), Iso', iso, lens)
+import Optics.Core (A_Lens, Iso', LabelOptic (..), iso, lens)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
@@ -318,8 +318,7 @@ fromSeconds seconds' = MkRelativeTime d h m s
 -- @since 0.1
 secondsIso :: Iso' RelativeTime Natural
 secondsIso = iso toSeconds fromSeconds
-
-{-# INLINABLE secondsIso #-}
+{-# INLINEABLE secondsIso #-}
 
 -- | Converts a string into a 'RelativeTime'. Converts either a
 -- "time string" e.g. "1d2h3m4s" or numeric literal (interpreted
