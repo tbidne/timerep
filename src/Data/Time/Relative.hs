@@ -16,6 +16,7 @@ module Data.Time.Relative
     -- * Conversions
     toSeconds,
     fromSeconds,
+    secondsIso,
     fromString,
 
     -- * Formatting
@@ -42,7 +43,7 @@ import Numeric.Algebra
     Semimodule,
     SemivectorSpace,
   )
-import Optics.Core (A_Lens, An_Iso, LabelOptic (..), iso, lens)
+import Optics.Core (A_Lens, LabelOptic (..), Iso', iso, lens)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
@@ -159,17 +160,6 @@ instance
   LabelOptic "seconds" k RelativeTime RelativeTime a b
   where
   labelOptic = lens seconds (\rt d -> rt {seconds = d})
-  {-# INLINEABLE labelOptic #-}
-
--- | @since 0.1
-instance
-  ( k ~ An_Iso,
-    a ~ Natural,
-    b ~ Natural
-  ) =>
-  LabelOptic "secondsIso" k RelativeTime RelativeTime a b
-  where
-  labelOptic = iso toSeconds fromSeconds
   {-# INLINEABLE labelOptic #-}
 
 -- | @since 0.1
@@ -314,6 +304,22 @@ fromSeconds seconds' = MkRelativeTime d h m s
     (h, hoursRem) = daysRem `quotRem` secondsInHour
     (m, s) = hoursRem `quotRem` secondsInMinute
 {-# INLINEABLE fromSeconds #-}
+
+-- | Isomorphism between 'Natural' seconds and 'RelativeTime'.
+--
+-- __Examples__
+-- >>> import Optics.Core ((^.), (#))
+-- >>> (zero { days = 1, hours = 2 }) ^. secondsIso
+-- 93600
+--
+-- >>> secondsIso # 93600
+-- MkRelativeTime {days = 1, hours = 2, minutes = 0, seconds = 0}
+--
+-- @since 0.1
+secondsIso :: Iso' RelativeTime Natural
+secondsIso = iso toSeconds fromSeconds
+
+{-# INLINABLE secondsIso #-}
 
 -- | Converts a string into a 'RelativeTime'. Converts either a
 -- "time string" e.g. "1d2h3m4s" or numeric literal (interpreted
