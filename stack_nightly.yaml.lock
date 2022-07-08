@@ -5,13 +5,6 @@
 
 packages:
 - completed:
-    pantry-tree:
-      sha256: 31987ee70107c5c204137d6f75b401cf8ed5e57df1047ee17d9eb0d4a6f7bc24
-      size: 330
-    hackage: tasty-hedgehog-1.2.0.0@sha256:3deb98e9a9de9e27c25d02b7fe92ad5cf68d5163fdaaf35bca3923b3e671d46d,1803
-  original:
-    hackage: tasty-hedgehog-1.2.0.0@sha256:3deb98e9a9de9e27c25d02b7fe92ad5cf68d5163fdaaf35bca3923b3e671d46d,1803
-- completed:
     name: algebra-simple
     pantry-tree:
       sha256: 686df99788ff2a6fdea8126c40411a9cc5e7cd53e06468a77a9037f5fa002374
@@ -24,7 +17,7 @@ packages:
     git: https://github.com/tbidne/algebra-simple.git
 snapshots:
 - completed:
-    sha256: 4c31d4ef975b0211078862566aedf3b82b6cea569fc2cde4c72a51e5a8d236ce
-    size: 618951
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/14.yaml
-  original: lts-19.14
+    sha256: f749167ba2a9ff2fcd0434bbd76a17a277572e90798617bc024d40a5324ce2af
+    size: 616346
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/7/7.yaml
+  original: nightly-2022-07-07

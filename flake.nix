@@ -1,7 +1,7 @@
 {
   description = "A package for low-precision relative time";
   inputs.algebra-simple-src.url = "github:tbidne/algebra-simple";
-  inputs.nixpkgs.url = "github:nixos/nixpkgs?rev=98000933d72a97632caf0db0027ea3eb2e5e7f29";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   outputs =
     { algebra-simple-src
@@ -12,7 +12,7 @@
     flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = import nixpkgs { inherit system; };
-      compilerVersion = "ghc922";
+      compilerVersion = "ghc923";
       compiler = pkgs.haskell.packages."${compilerVersion}";
       mkPkg = returnShellEnv:
         compiler.developPackage {
