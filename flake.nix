@@ -1,7 +1,7 @@
 {
   description = "A package for low-precision relative time";
   inputs.algebra-simple-src.url = "github:tbidne/algebra-simple";
-  inputs.nixpkgs.url = "github:nixos/nixpkgs";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   outputs =
     { algebra-simple-src

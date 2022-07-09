@@ -6,6 +6,13 @@
 packages:
 - completed:
     pantry-tree:
+      sha256: c8135d95be0df0ce63d0ee398af20e38f505153032b32c4ab0e8f0f615501d46
+      size: 419
+    hackage: env-guard-0.2@sha256:59410eed9b9ddbd115760a59c7170927320d8612e414701d323a0c8985c97523,1251
+  original:
+    hackage: env-guard-0.2@sha256:59410eed9b9ddbd115760a59c7170927320d8612e414701d323a0c8985c97523,1251
+- completed:
+    pantry-tree:
       sha256: dc4cabaa2626c20a70a3e8781e994110bbd9f2c55f35a1c658e1c2b0d2db87c1
       size: 5380
     hackage: optics-core-0.4.1@sha256:b163d1a8f392536c645cbd728c3e29d9f35864b25b1e3cef3a29806ee8a21c6b,5545
@@ -21,13 +28,13 @@ packages:
 - completed:
     name: algebra-simple
     pantry-tree:
-      sha256: 686df99788ff2a6fdea8126c40411a9cc5e7cd53e06468a77a9037f5fa002374
-      size: 4921
-    commit: 086da47c888d0662f4047ad04214df03097d3b08
+      sha256: a99c28e1f0304d9bbd24c6f60603c41e8ea82efaf0377e49f31fc48718c0a57b
+      size: 4923
+    commit: aa8ebb5c324248dba28d2b707363939c4904046b
     git: https://github.com/tbidne/algebra-simple.git
     version: '0.1'
   original:
-    commit: 086da47c888d0662f4047ad04214df03097d3b08
+    commit: aa8ebb5c324248dba28d2b707363939c4904046b
     git: https://github.com/tbidne/algebra-simple.git
 snapshots:
 - completed:
