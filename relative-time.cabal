@@ -28,7 +28,6 @@ common common-exts
     ApplicativeDo
     DataKinds
     DeriveAnyClass
-    DeriveDataTypeable
     DeriveGeneric
     DerivingStrategies
     DerivingVia

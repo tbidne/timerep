@@ -27,7 +27,6 @@ where
 
 import Control.Applicative (Alternative (..))
 import Control.DeepSeq (NFData)
-import Data.Data (Data)
 import Data.Foldable (foldl')
 import Data.Kind (Type)
 import Data.List qualified as L
@@ -107,8 +106,6 @@ data RelativeTime = MkRelativeTime
   }
   deriving stock
     ( -- | @since 0.1
-      Data,
-      -- | @since 0.1
       Generic,
       -- | @since 0.1
       Show
