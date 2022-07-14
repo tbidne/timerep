@@ -7,6 +7,7 @@
 module Data.Time.Relative
   ( -- * Type
     RelativeTime (..),
+    _MkRelativeTime,
 
     -- * Operations
     -- $operations
@@ -16,7 +17,6 @@ module Data.Time.Relative
     -- * Conversions
     toSeconds,
     fromSeconds,
-    secondsIso,
     fromString,
 
     -- * Formatting
@@ -201,6 +201,22 @@ instance Semimodule RelativeTime Natural
 -- | @since 0.1
 instance SemivectorSpace RelativeTime Natural
 
+-- | Isomorphism between 'Natural' seconds and 'RelativeTime'.
+--
+-- __Examples__
+--
+-- >>> import Optics.Core ((^.), (#))
+-- >>> (zero { days = 1, hours = 2 }) ^. _MkRelativeTime
+-- 93600
+--
+-- >>> _MkRelativeTime # 93600
+-- MkRelativeTime {days = 1, hours = 2, minutes = 0, seconds = 0}
+--
+-- @since 0.1
+_MkRelativeTime :: Iso' RelativeTime Natural
+_MkRelativeTime = iso toSeconds fromSeconds
+{-# INLINEABLE _MkRelativeTime #-}
+
 -- $operations
 -- Operations on 'RelativeTime'. In addition to the following operations, we
 -- also have instances from @algebra-simple@:
@@ -301,22 +317,6 @@ fromSeconds seconds' = MkRelativeTime d h m s
     (h, hoursRem) = daysRem `quotRem` secondsInHour
     (m, s) = hoursRem `quotRem` secondsInMinute
 {-# INLINEABLE fromSeconds #-}
-
--- | Isomorphism between 'Natural' seconds and 'RelativeTime'.
---
--- __Examples__
---
--- >>> import Optics.Core ((^.), (#))
--- >>> (zero { days = 1, hours = 2 }) ^. secondsIso
--- 93600
---
--- >>> secondsIso # 93600
--- MkRelativeTime {days = 1, hours = 2, minutes = 0, seconds = 0}
---
--- @since 0.1
-secondsIso :: Iso' RelativeTime Natural
-secondsIso = iso toSeconds fromSeconds
-{-# INLINEABLE secondsIso #-}
 
 -- | Converts a string into a 'RelativeTime'. Converts either a
 -- "time string" e.g. "1d2h3m4s" or numeric literal (interpreted

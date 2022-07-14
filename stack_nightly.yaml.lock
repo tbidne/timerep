@@ -14,13 +14,13 @@ packages:
 - completed:
     name: algebra-simple
     pantry-tree:
-      sha256: 89428919fcac72e858065d24f38033929a99f4812dedb907749a89b1ca0911c7
+      sha256: 88e752bf0ad77dd36cb6961d2106351d489628efb18baede62b8a4951084dbb6
       size: 4921
-    commit: 12bf44cb4815cf6ee040636f86e10d04386a6e4c
+    commit: 078953fdac6bb9738aa6adae12bd893cf4debc01
     git: https://github.com/tbidne/algebra-simple.git
     version: '0.1'
   original:
-    commit: 12bf44cb4815cf6ee040636f86e10d04386a6e4c
+    commit: 078953fdac6bb9738aa6adae12bd893cf4debc01
     git: https://github.com/tbidne/algebra-simple.git
 snapshots:
 - completed:
