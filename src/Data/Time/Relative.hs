@@ -42,6 +42,7 @@ import Numeric.Algebra
     Semimodule,
     SemivectorSpace,
   )
+import Numeric.Literal.Integer (FromInteger (..))
 import Optics.Core (A_Lens, Iso', LabelOptic (..), iso, lens)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
@@ -173,6 +174,12 @@ instance Ord RelativeTime where
 instance Read RelativeTime where
   readPrec = readRecord +++ readSeconds +++ readTimeStr
   {-# INLINEABLE readPrec #-}
+
+-- | __WARNING: Partial__
+--
+-- @since 0.1
+instance FromInteger RelativeTime where
+  afromInteger = fromSeconds . fromInteger
 
 -- | @since 0.1
 instance ASemigroup RelativeTime where

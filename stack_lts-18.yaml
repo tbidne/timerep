@@ -12,4 +12,4 @@ extra-deps:
 - optics-core-0.4.1@sha256:b163d1a8f392536c645cbd728c3e29d9f35864b25b1e3cef3a29806ee8a21c6b,5545
 - tasty-hedgehog-1.2.0.0@sha256:3deb98e9a9de9e27c25d02b7fe92ad5cf68d5163fdaaf35bca3923b3e671d46d,1803
 - git: https://github.com/tbidne/algebra-simple.git
-  commit: 078953fdac6bb9738aa6adae12bd893cf4debc01
+  commit: c60fc447b16f575c84ffaf39ca5640f63dc9196b
