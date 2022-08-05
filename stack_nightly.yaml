@@ -11,5 +11,3 @@ extra-deps:
 - env-guard-0.2@sha256:59410eed9b9ddbd115760a59c7170927320d8612e414701d323a0c8985c97523,1251
 - git: https://github.com/tbidne/algebra-simple.git
   commit: 078953fdac6bb9738aa6adae12bd893cf4debc01
-nix:
-  shell-file: nix/stack_nightly.nix

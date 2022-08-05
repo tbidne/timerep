@@ -13,4 +13,4 @@ extra-deps:
 - git: https://github.com/tbidne/algebra-simple.git
   commit: 078953fdac6bb9738aa6adae12bd893cf4debc01
 nix:
-  shell-file: nix/stack_lts-19.nix
+  shell-file: nix/stack.nix
