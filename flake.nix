@@ -16,9 +16,16 @@
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    bounds = {
+      url = "github:tbidne/bounds";
+      inputs.flake-compat.follows = "flake-compat";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     { algebra-simple
+    , bounds
     , flake-compat
     , flake-utils
     , nixpkgs
@@ -50,6 +57,7 @@
           overrides = final: prev: with compiler; {
             algebra-simple =
               final.callCabal2nix "algebra-simple" algebra-simple { };
+            bounds = final.callCabal2nix "bounds" bounds { };
             tasty-hedgehog = prev.tasty-hedgehog_1_3_1_0;
           };
         };

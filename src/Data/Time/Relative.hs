@@ -27,6 +27,7 @@ where
 
 import Control.Applicative (Alternative (..))
 import Control.DeepSeq (NFData)
+import Data.Bounds (LowerBounded (lowerBound), UpperBoundless)
 import Data.Foldable (foldl')
 import Data.Kind (Type)
 import Data.List qualified as L
@@ -175,6 +176,14 @@ instance Ord RelativeTime where
 instance Read RelativeTime where
   readPrec = readRecord +++ readSeconds +++ readTimeStr
   {-# INLINEABLE readPrec #-}
+
+-- | @since 0.1
+instance LowerBounded RelativeTime where
+  lowerBound = MkRelativeTime 0 0 0 0
+  {-# INLINEABLE lowerBound #-}
+
+-- | @since 0.1
+instance UpperBoundless RelativeTime
 
 -- | __WARNING: Partial__
 --

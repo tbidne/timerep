@@ -14,6 +14,8 @@ extra-deps:
 - tasty-hedgehog-1.2.0.0@sha256:3deb98e9a9de9e27c25d02b7fe92ad5cf68d5163fdaaf35bca3923b3e671d46d,1803
 - git: https://github.com/tbidne/algebra-simple.git
   commit: c8aaa4495964ecea9bb898c4fcb8b1c718ecc813
+- git: https://github.com/tbidne/bounds.git
+  commit: 7a8832ef4a55d565e72fab553a4d485329235bf7
 nix:
   shell-file: nix/stack.nix
   nix-shell-options: [--argstr, stack-vers, nightly]

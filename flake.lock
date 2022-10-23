@@ -26,6 +26,32 @@
         "type": "github"
       }
     },
+    "bounds": {
+      "inputs": {
+        "flake-compat": [
+          "flake-compat"
+        ],
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1666392820,
+        "narHash": "sha256-EV8srKQfD05u/Rq6LpPUVdT6WyY9VLsvu5vJ+2oBemg=",
+        "owner": "tbidne",
+        "repo": "bounds",
+        "rev": "7a8832ef4a55d565e72fab553a4d485329235bf7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tbidne",
+        "repo": "bounds",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -76,6 +102,7 @@
     "root": {
       "inputs": {
         "algebra-simple": "algebra-simple",
+        "bounds": "bounds",
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs"

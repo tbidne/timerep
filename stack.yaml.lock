@@ -29,6 +29,17 @@ packages:
   original:
     commit: c8aaa4495964ecea9bb898c4fcb8b1c718ecc813
     git: https://github.com/tbidne/algebra-simple.git
+- completed:
+    commit: 7a8832ef4a55d565e72fab553a4d485329235bf7
+    git: https://github.com/tbidne/bounds.git
+    name: bounds
+    pantry-tree:
+      sha256: 6a960a4a889dde6f76ffdead9abdcbe8ac3efc17f24c4ff7594861c41070a667
+      size: 1474
+    version: '0.1'
+  original:
+    commit: 7a8832ef4a55d565e72fab553a4d485329235bf7
+    git: https://github.com/tbidne/bounds.git
 snapshots:
 - completed:
     sha256: 7f4393ad659c579944d12202cffb12d8e4b8114566b015f77bbc303a24cff934
