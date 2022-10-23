@@ -3,7 +3,7 @@ name:               relative-time
 version:            0.1
 license:            MIT
 license-file:       LICENSE
-tested-with:        GHC ==8.10.7 || ==9.0.2 || ==9.2.2
+tested-with:        GHC ==8.10.7 || ==9.0.2 || ==9.2.4 || ==9.4.2
 copyright:          2022 Thomas Bidne
 author:             Thomas Bidne
 maintainer:         tbidne@protonmail.com
@@ -41,13 +41,14 @@ common common-exts
     OverloadedStrings
     StandaloneKindSignatures
     TypeApplications
+    TypeOperators
 
 library
   import:           common-exts
   exposed-modules:  Data.Time.Relative
   build-depends:
     , algebra-simple  ^>=0.1
-    , base            >=4.14.0.0 && <4.17
+    , base            >=4.14.0.0 && <4.18
     , deepseq         ^>=1.4.4.0
     , optics-core     ^>=0.4
 
@@ -77,11 +78,11 @@ test-suite unit
   build-depends:
     , algebra-simple
     , base
-    , hedgehog        >=1.0.2   && <1.2
+    , hedgehog        >=1.0.2   && <1.3
     , relative-time
     , tagged          ^>=0.8.6
     , tasty           >=1.1.0.3 && <1.5
-    , tasty-hedgehog  ^>=1.2.0
+    , tasty-hedgehog  >=1.2.0 && <1.4
     , tasty-hunit     >=0.9     && <0.11
 
   hs-source-dirs:   test/unit

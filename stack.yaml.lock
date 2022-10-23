@@ -5,33 +5,33 @@
 
 packages:
 - completed:
+    hackage: env-guard-0.2@sha256:59410eed9b9ddbd115760a59c7170927320d8612e414701d323a0c8985c97523,1251
     pantry-tree:
       sha256: c8135d95be0df0ce63d0ee398af20e38f505153032b32c4ab0e8f0f615501d46
       size: 419
-    hackage: env-guard-0.2@sha256:59410eed9b9ddbd115760a59c7170927320d8612e414701d323a0c8985c97523,1251
   original:
     hackage: env-guard-0.2@sha256:59410eed9b9ddbd115760a59c7170927320d8612e414701d323a0c8985c97523,1251
 - completed:
+    hackage: tasty-hedgehog-1.2.0.0@sha256:3deb98e9a9de9e27c25d02b7fe92ad5cf68d5163fdaaf35bca3923b3e671d46d,1803
     pantry-tree:
       sha256: 31987ee70107c5c204137d6f75b401cf8ed5e57df1047ee17d9eb0d4a6f7bc24
       size: 330
-    hackage: tasty-hedgehog-1.2.0.0@sha256:3deb98e9a9de9e27c25d02b7fe92ad5cf68d5163fdaaf35bca3923b3e671d46d,1803
   original:
     hackage: tasty-hedgehog-1.2.0.0@sha256:3deb98e9a9de9e27c25d02b7fe92ad5cf68d5163fdaaf35bca3923b3e671d46d,1803
 - completed:
+    commit: c8aaa4495964ecea9bb898c4fcb8b1c718ecc813
+    git: https://github.com/tbidne/algebra-simple.git
     name: algebra-simple
     pantry-tree:
-      sha256: c0be186a0990d3ca8bf5e4657a7bd7e61fb627751abe5e04d00d2fd3d39b9792
-      size: 4196
-    commit: c60fc447b16f575c84ffaf39ca5640f63dc9196b
-    git: https://github.com/tbidne/algebra-simple.git
+      sha256: 35146456af251b3f9726d520aa8caa62b35a4102205a493eab9c5f41697d7b67
+      size: 4285
     version: '0.1'
   original:
-    commit: c60fc447b16f575c84ffaf39ca5640f63dc9196b
+    commit: c8aaa4495964ecea9bb898c4fcb8b1c718ecc813
     git: https://github.com/tbidne/algebra-simple.git
 snapshots:
 - completed:
-    sha256: 4c31d4ef975b0211078862566aedf3b82b6cea569fc2cde4c72a51e5a8d236ce
-    size: 618951
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/14.yaml
-  original: lts-19.14
+    sha256: 7f4393ad659c579944d12202cffb12d8e4b8114566b015f77bbc303a24cff934
+    size: 619405
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/28.yaml
+  original: lts-19.28
