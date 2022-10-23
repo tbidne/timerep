@@ -51,6 +51,7 @@ import Text.Read (Read (..))
 import Text.Read.Lex (Lexeme (..))
 
 -- $setup
+-- >>> import Numeric.Algebra.Additive.AMonoid (AMonoid (zero))
 -- >>> let sleepSeconds _ = pure ()
 
 -- | Represents a relative time with second precision. This is primarily
