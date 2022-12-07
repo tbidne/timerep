@@ -13,9 +13,9 @@ extra-deps:
 - optics-core-0.4.1@sha256:b163d1a8f392536c645cbd728c3e29d9f35864b25b1e3cef3a29806ee8a21c6b,5545
 - tasty-hedgehog-1.2.0.0@sha256:3deb98e9a9de9e27c25d02b7fe92ad5cf68d5163fdaaf35bca3923b3e671d46d,1803
 - git: https://github.com/tbidne/algebra-simple.git
-  commit: c8aaa4495964ecea9bb898c4fcb8b1c718ecc813
+  commit: 2c8a79e8d3bf67c99e4851c557bf68a44c512307
 - git: https://github.com/tbidne/bounds.git
-  commit: 7a8832ef4a55d565e72fab553a4d485329235bf7
+  commit: 004f03aec46f29069fd0bf5115a384cd2b3141b3
 nix:
   shell-file: nix/stack.nix
   nix-shell-options: [--argstr, stack-vers, nightly]

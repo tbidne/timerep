@@ -10,11 +10,11 @@ package relative-time
 source-repository-package
   type: git
   location: https://github.com/tbidne/algebra-simple.git
-  tag: c8aaa4495964ecea9bb898c4fcb8b1c718ecc813
+  tag: 2c8a79e8d3bf67c99e4851c557bf68a44c512307
 
 source-repository-package
   type: git
   location: https://github.com/tbidne/bounds.git
-  tag: 7a8832ef4a55d565e72fab553a4d485329235bf7
+  tag: 004f03aec46f29069fd0bf5115a384cd2b3141b3
 
 test-show-details: direct
