@@ -1,5 +1,4 @@
 .PHONY: build clean repl watch ;\
-	test unit integration functional ;\
 	cic ci formatc format lint lintc ;\
 	haddock haddockc hackage
 
@@ -12,13 +11,6 @@ build:
 		cabal build; \
 	else \
 		cabal build $(ARGS); \
-	fi
-
-test:
-	if [ -z "$(ARGS)" ]; then \
-		RUN_DOCTEST=1 cabal test; \
-	else \
-		RUN_DOCTEST=1 cabal test $(ARGS); \
 	fi
 
 repl:
@@ -61,7 +53,7 @@ haddock:
 	cabal haddock --haddock-hyperlink-source --haddock-quickjump ;\
 	mkdir -p docs/ ;\
 	find docs/ -type f | xargs -I % sh -c "rm -r %" ;\
-	cp -r dist-newstyle/build/x86_64-linux/ghc-9.2.4/relative-time-0.1/doc/html/relative-time/* docs/
+	cp -r dist-newstyle/build/x86_64-linux/ghc-9.2.5/relative-time-0.1/doc/html/relative-time/* docs/
 
 haddockc:
 	nix run github:tbidne/nix-hs-tools/0.7#haddock-cov

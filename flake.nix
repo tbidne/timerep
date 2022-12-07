@@ -43,8 +43,14 @@
             ghcid
             haskell-language-server
           ];
-          ghc-version = "ghc924";
-          compiler = pkgs.haskell.packages."${ghc-version}";
+          ghc-version = "ghc925";
+          compiler = pkgs.haskell.packages."${ghc-version}".override {
+            overrides = final: prev: {
+              # https://github.com/ddssff/listlike/issues/23
+              ListLike = hlib.dontCheck prev.ListLike;
+            };
+          };
+          hlib = pkgs.haskell.lib;
           mkPkg = returnShellEnv: withDevTools:
             compiler.developPackage {
               inherit returnShellEnv;
@@ -58,7 +64,8 @@
                 algebra-simple =
                   final.callCabal2nix "algebra-simple" algebra-simple { };
                 bounds = final.callCabal2nix "bounds" bounds { };
-                tasty-hedgehog = prev.tasty-hedgehog_1_3_1_0;
+                hedgehog = prev.hedgehog_1_2;
+                tasty-hedgehog = prev.tasty-hedgehog_1_4_0_0;
               };
             };
         in
