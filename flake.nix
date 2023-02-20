@@ -40,7 +40,7 @@
             pkgs.zlib
           ];
           devTools = c: with c; [
-            ghcid
+            (hlib.dontCheck ghcid)
             haskell-language-server
           ];
           ghc-version = "ghc944";
