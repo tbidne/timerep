@@ -24,14 +24,14 @@
     };
   };
   outputs =
-    { algebra-simple
+    inputs@{ algebra-simple
     , bounds
     , flake-compat
     , flake-parts
     , nixpkgs
     , self
     }:
-    flake-parts.lib.mkFlake { inherit self; } {
+    flake-parts.lib.mkFlake { inherit inputs; } {
       perSystem = { pkgs, ... }:
         let
           buildTools = c: with c; [
@@ -43,7 +43,7 @@
             ghcid
             haskell-language-server
           ];
-          ghc-version = "ghc925";
+          ghc-version = "ghc944";
           compiler = pkgs.haskell.packages."${ghc-version}".override {
             overrides = final: prev: {
               # https://github.com/ddssff/listlike/issues/23
@@ -51,15 +51,14 @@
             };
           };
           hlib = pkgs.haskell.lib;
-          mkPkg = returnShellEnv: withDevTools:
+          mkPkg = returnShellEnv:
             compiler.developPackage {
               inherit returnShellEnv;
               name = "relative-time";
               root = ./.;
               modifier = drv:
                 pkgs.haskell.lib.addBuildTools drv
-                  (buildTools compiler ++
-                    (if withDevTools then devTools compiler else [ ]));
+                  (buildTools compiler ++ devTools compiler);
               overrides = final: prev: with compiler; {
                 algebra-simple =
                   final.callCabal2nix "algebra-simple" algebra-simple { };
@@ -70,9 +69,8 @@
             };
         in
         {
-          packages.default = mkPkg false false;
-          devShells.default = mkPkg true true;
-          devShells.ci = mkPkg true false;
+          packages.default = mkPkg false;
+          devShells.default = mkPkg true;
         };
       systems = [
         "x86_64-linux"
