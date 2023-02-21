@@ -41,7 +41,11 @@
           ];
           devTools = c: with c; [
             (hlib.dontCheck ghcid)
-            haskell-language-server
+            (hlib.overrideCabal haskell-language-server (old: {
+              # Fourmolu tests must be flaky since they're failing on CI.
+              # We don't need it anyway.
+              configureFlags = (old.configureFlags or [ ]) ++ [ "-f -fourmolu" ];
+            }))
           ];
           ghc-version = "ghc944";
           compiler = pkgs.haskell.packages."${ghc-version}".override {
