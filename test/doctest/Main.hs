@@ -9,5 +9,33 @@ main =
   guardOrElse'
     "RUN_DOCTEST"
     ExpectEnvSet
-    (DocTest.mainFromCabal "relative-time" [])
+    (DocTest.doctest args)
     (putStrLn "*** Doctests Disabled ***")
+  where
+    args = files <> exts
+
+files :: [String]
+files =
+  [ "-isrc",
+    "src/Data/Time/Relative.hs"
+  ]
+
+exts :: [String]
+exts =
+  [ "-XApplicativeDo",
+    "-XDataKinds",
+    "-XDeriveAnyClass",
+    "-XDeriveDataTypeable",
+    "-XDeriveGeneric",
+    "-XDerivingStrategies",
+    "-XDerivingVia",
+    "-XFlexibleInstances",
+    "-XGADTs",
+    "-XImportQualifiedPost",
+    "-XLambdaCase",
+    "-XMultiParamTypeClasses",
+    "-XNumericUnderscores",
+    "-XOverloadedStrings",
+    "-XStandaloneKindSignatures",
+    "-XTypeApplications"
+  ]
