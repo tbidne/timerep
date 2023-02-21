@@ -68,7 +68,8 @@
               root = ./.;
               modifier = drv:
                 pkgs.haskell.lib.addBuildTools drv
-                  (buildTools compiler ++ devTools compiler);
+                  (buildTools compiler ++
+                    (if returnShellEnv then devTools compiler else [ ]));
               overrides = final: prev: with compiler; {
                 algebra-simple =
                   final.callCabal2nix "algebra-simple" algebra-simple { };
