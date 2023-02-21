@@ -43,8 +43,14 @@
             (hlib.dontCheck ghcid)
             (hlib.overrideCabal haskell-language-server (old: {
               # Fourmolu tests must be flaky since they're failing on CI.
-              # We don't need it anyway.
-              configureFlags = (old.configureFlags or [ ]) ++ [ "-f -fourmolu" ];
+              # We don't need it or these others anyway.
+              configureFlags = (old.configureFlags or [ ]) ++
+                [
+                  "-f -brittany"
+                  "-f -floskell"
+                  "-f -fourmolu"
+                  "-f -stylishhaskell"
+                ];
             }))
           ];
           ghc-version = "ghc944";
