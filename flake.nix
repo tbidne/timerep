@@ -11,13 +11,13 @@
 
     # haskell
     algebra-simple = {
-      url = "github:tbidne/algebra-simple";
+      url = "github:tbidne/algebra-simple/windows";
       inputs.flake-compat.follows = "flake-compat";
       inputs.flake-parts.follows = "flake-parts";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     bounds = {
-      url = "github:tbidne/bounds";
+      url = "github:tbidne/bounds/windows";
       inputs.flake-compat.follows = "flake-compat";
       inputs.flake-parts.follows = "flake-parts";
       inputs.nixpkgs.follows = "nixpkgs";
