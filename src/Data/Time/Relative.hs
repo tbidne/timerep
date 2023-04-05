@@ -39,7 +39,6 @@ import Numeric.Algebra
     ASemigroup (..),
     MSemiSpace (..),
     MSpace (..),
-    NonZero (..),
     Semimodule,
     SemivectorSpace,
   )
@@ -209,7 +208,7 @@ instance MSemiSpace RelativeTime Natural where
 
 -- | @since 0.1
 instance MSpace RelativeTime Natural where
-  rt .% MkNonZero k = fromSeconds $ toSeconds rt `div` k
+  rt .% k = fromSeconds $ toSeconds rt `div` k
   {-# INLINEABLE (.%) #-}
 
 -- | @since 0.1
@@ -255,8 +254,7 @@ _MkRelativeTime = iso toSeconds fromSeconds
 --
 -- >>> -- Scalar division
 -- >>> import Numeric.Algebra.Space.MSpace (MSpace ((.%)))
--- >>> import Numeric.Data.NonZero (unsafeNonZero)
--- >>> t1 .% unsafeNonZero 2
+-- >>> t1 .% 2
 -- MkRelativeTime {days = 0, hours = 13, minutes = 1, seconds = 32}
 --
 -- These operations are 'normalize'd.

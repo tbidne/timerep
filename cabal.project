@@ -10,11 +10,13 @@ package relative-time
 source-repository-package
   type: git
   location: https://github.com/tbidne/algebra-simple.git
-  tag: 63f86638145baa32fdd21d87344701b9c8c93c23
+  tag: 22128fdc52ec2e7eef68222e6426511a0281d52b
 
 source-repository-package
   type: git
   location: https://github.com/tbidne/bounds.git
-  tag: aeb822deb5593a0e774105f94e65527e63931cfa
+  tag: f7997b0b14d04bbca0bf589cc6661170c0ba48bc
+
+allow-newer: hedgehog-1.2:template-haskell
 
 test-show-details: direct
