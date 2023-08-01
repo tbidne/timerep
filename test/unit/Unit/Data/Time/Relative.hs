@@ -4,7 +4,12 @@ module Unit.Data.Time.Relative
 where
 
 import Data.List (sort)
-import Data.Time.Relative (RelativeTime (..))
+import Data.Time.Relative
+  ( Format (..),
+    FormatStyle (..),
+    FormatVerbosity (..),
+    RelativeTime (..),
+  )
 import Data.Time.Relative qualified as Relative
 import GHC.Natural (Natural)
 import Hedgehog (Gen, (===))
@@ -30,93 +35,114 @@ specs :: TestTree
 specs =
   Tasty.testGroup
     "Specs"
-    [ formatLong,
-      formatShort
+    [ formatProseCompact,
+      formatProseFull,
+      formatDigitalCompact,
+      formatDigitalFull
     ]
 
-formatLong :: TestTree
-formatLong =
+formatProseCompact :: TestTree
+formatProseCompact =
   Tasty.testGroup
-    "Format long"
-    [ testZeroLong,
-      testSingularLong,
-      testPluralMinLong,
-      testPluralMinSecLong,
-      testHourLong,
-      testDayLong
-    ]
+    "Format Prose Compact"
+    (mkFormatTests format expected)
+  where
+    expected =
+      [ "0 seconds",
+        "1 minute, 1 second",
+        "3 minutes",
+        "3 minutes, 20 seconds",
+        "1 hour, 1 second",
+        "1 hour, 6 minutes, 40 seconds",
+        "1 day, 3 hours, 46 minutes, 40 seconds",
+        "0 seconds"
+      ]
+    format =
+      MkFormat
+        { style = FormatStyleProse,
+          verbosity = FormatVerbosityCompact
+        }
 
-testZeroLong :: TestTree
-testZeroLong =
-  testCase "0 should 0 seconds" $
-    "0 seconds" @=? Relative.formatSecondsLong 0
-
-testSingularLong :: TestTree
-testSingularLong =
-  testCase "61 should be singular minute and seconds" $
-    "1 minute, 1 second" @=? Relative.formatSecondsLong 61
-
-testPluralMinLong :: TestTree
-testPluralMinLong =
-  testCase "180 should be plural minutes" $
-    "3 minutes" @=? Relative.formatSecondsLong 180
-
-testPluralMinSecLong :: TestTree
-testPluralMinSecLong =
-  testCase "200 should pluralize minutes and seconds" $
-    "3 minutes, 20 seconds" @=? Relative.formatSecondsLong 200
-
-testHourLong :: TestTree
-testHourLong =
-  testCase "4000 should include hours" $
-    "1 hour, 6 minutes, 40 seconds" @=? Relative.formatSecondsLong 4_000
-
-testDayLong :: TestTree
-testDayLong =
-  testCase "100,000 should include days" $
-    "1 day, 3 hours, 46 minutes, 40 seconds" @=? Relative.formatSecondsLong 100_000
-
-formatShort :: TestTree
-formatShort =
+formatProseFull :: TestTree
+formatProseFull =
   Tasty.testGroup
-    "Format short"
-    [ testZeroShort,
-      testSingularShort,
-      testPluralMinShort,
-      testPluralMinSecShort,
-      testHourShort,
-      testDayShort
-    ]
+    "Format Prose Full"
+    (mkFormatTests format expected)
+  where
+    expected =
+      [ "0 days, 0 hours, 0 minutes, 0 seconds",
+        "0 days, 0 hours, 1 minute, 1 second",
+        "0 days, 0 hours, 3 minutes, 0 seconds",
+        "0 days, 0 hours, 3 minutes, 20 seconds",
+        "0 days, 1 hour, 0 minutes, 1 second",
+        "0 days, 1 hour, 6 minutes, 40 seconds",
+        "1 day, 3 hours, 46 minutes, 40 seconds"
+      ]
+    format =
+      MkFormat
+        { style = FormatStyleProse,
+          verbosity = FormatVerbosityFull
+        }
 
-testZeroShort :: TestTree
-testZeroShort =
-  testCase "0 should 00:00:00:00" $
-    "00:00:00:00" @=? Relative.formatSecondsShort 0
+formatDigitalCompact :: TestTree
+formatDigitalCompact =
+  Tasty.testGroup
+    "Format Digital Compact"
+    (mkFormatTests format expected)
+  where
+    expected =
+      [ "00",
+        "01:01",
+        "03:00",
+        "03:20",
+        "01:00:01",
+        "01:06:40",
+        "01:03:46:40"
+      ]
+    format =
+      MkFormat
+        { style = FormatStyleDigital,
+          verbosity = FormatVerbosityCompact
+        }
 
-testSingularShort :: TestTree
-testSingularShort =
-  testCase "61 should be 00:00:01:01" $
-    "00:00:01:01" @=? Relative.formatSecondsShort 61
+formatDigitalFull :: TestTree
+formatDigitalFull =
+  Tasty.testGroup
+    "Format Digital Full"
+    (mkFormatTests format expected)
+  where
+    expected =
+      [ "00:00:00:00",
+        "00:00:01:01",
+        "00:00:03:00",
+        "00:00:03:20",
+        "00:01:00:01",
+        "00:01:06:40",
+        "01:03:46:40"
+      ]
+    format =
+      MkFormat
+        { style = FormatStyleDigital,
+          verbosity = FormatVerbosityFull
+        }
 
-testPluralMinShort :: TestTree
-testPluralMinShort =
-  testCase "180 should be 00:00:03:00" $
-    "00:00:03:00" @=? Relative.formatSecondsShort 180
+mkFormatTests :: Format -> [String] -> [TestTree]
+mkFormatTests f = zipWith (testFormat f) formatResults
+  where
+    testFormat :: Format -> Natural -> String -> TestTree
+    testFormat fmt result expectation =
+      testCase (show result ++ " should be " ++ expectation) $
+        expectation @=? Relative.formatSeconds fmt result
 
-testPluralMinSecShort :: TestTree
-testPluralMinSecShort =
-  testCase "200 should be 00:00:03:20" $
-    "00:00:03:20" @=? Relative.formatSecondsShort 200
-
-testHourShort :: TestTree
-testHourShort =
-  testCase "4000 should be 00:01:06:40" $
-    "00:01:06:40" @=? Relative.formatSecondsShort 4_000
-
-testDayShort :: TestTree
-testDayShort =
-  testCase "100,000 should be 01:03:46:40" $
-    "01:03:46:40" @=? Relative.formatSecondsShort 100_000
+    formatResults =
+      [ 0,
+        61,
+        180,
+        200,
+        3_601,
+        4_000,
+        100_000
+      ]
 
 props :: TestTree
 props =
