@@ -30,43 +30,93 @@ specs :: TestTree
 specs =
   Tasty.testGroup
     "Specs"
-    [ testZero,
-      testSingular,
-      testPluralMin,
-      testPluralMinSec,
-      testHour,
-      testDay
+    [ formatLong,
+      formatShort
     ]
 
-testZero :: TestTree
-testZero =
+formatLong :: TestTree
+formatLong =
+  Tasty.testGroup
+    "Format long"
+    [ testZeroLong,
+      testSingularLong,
+      testPluralMinLong,
+      testPluralMinSecLong,
+      testHourLong,
+      testDayLong
+    ]
+
+testZeroLong :: TestTree
+testZeroLong =
   testCase "0 should 0 seconds" $
-    "0 seconds" @=? Relative.formatSeconds 0
+    "0 seconds" @=? Relative.formatSecondsLong 0
 
-testSingular :: TestTree
-testSingular =
+testSingularLong :: TestTree
+testSingularLong =
   testCase "61 should be singular minute and seconds" $
-    "1 minute, 1 second" @=? Relative.formatSeconds 61
+    "1 minute, 1 second" @=? Relative.formatSecondsLong 61
 
-testPluralMin :: TestTree
-testPluralMin =
+testPluralMinLong :: TestTree
+testPluralMinLong =
   testCase "180 should be plural minutes" $
-    "3 minutes" @=? Relative.formatSeconds 180
+    "3 minutes" @=? Relative.formatSecondsLong 180
 
-testPluralMinSec :: TestTree
-testPluralMinSec =
+testPluralMinSecLong :: TestTree
+testPluralMinSecLong =
   testCase "200 should pluralize minutes and seconds" $
-    "3 minutes, 20 seconds" @=? Relative.formatSeconds 200
+    "3 minutes, 20 seconds" @=? Relative.formatSecondsLong 200
 
-testHour :: TestTree
-testHour =
+testHourLong :: TestTree
+testHourLong =
   testCase "4000 should include hours" $
-    "1 hour, 6 minutes, 40 seconds" @=? Relative.formatSeconds 4_000
+    "1 hour, 6 minutes, 40 seconds" @=? Relative.formatSecondsLong 4_000
 
-testDay :: TestTree
-testDay =
+testDayLong :: TestTree
+testDayLong =
   testCase "100,000 should include days" $
-    "1 day, 3 hours, 46 minutes, 40 seconds" @=? Relative.formatSeconds 100_000
+    "1 day, 3 hours, 46 minutes, 40 seconds" @=? Relative.formatSecondsLong 100_000
+
+formatShort :: TestTree
+formatShort =
+  Tasty.testGroup
+    "Format short"
+    [ testZeroShort,
+      testSingularShort,
+      testPluralMinShort,
+      testPluralMinSecShort,
+      testHourShort,
+      testDayShort
+    ]
+
+testZeroShort :: TestTree
+testZeroShort =
+  testCase "0 should 00:00:00:00" $
+    "00:00:00:00" @=? Relative.formatSecondsShort 0
+
+testSingularShort :: TestTree
+testSingularShort =
+  testCase "61 should be 00:00:01:01" $
+    "00:00:01:01" @=? Relative.formatSecondsShort 61
+
+testPluralMinShort :: TestTree
+testPluralMinShort =
+  testCase "180 should be 00:00:03:00" $
+    "00:00:03:00" @=? Relative.formatSecondsShort 180
+
+testPluralMinSecShort :: TestTree
+testPluralMinSecShort =
+  testCase "200 should be 00:00:03:20" $
+    "00:00:03:20" @=? Relative.formatSecondsShort 200
+
+testHourShort :: TestTree
+testHourShort =
+  testCase "4000 should be 00:01:06:40" $
+    "00:01:06:40" @=? Relative.formatSecondsShort 4_000
+
+testDayShort :: TestTree
+testDayShort =
+  testCase "100,000 should be 01:03:46:40" $
+    "01:03:46:40" @=? Relative.formatSecondsShort 100_000
 
 props :: TestTree
 props =

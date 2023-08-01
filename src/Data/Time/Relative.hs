@@ -20,12 +20,14 @@ module Data.Time.Relative
     fromString,
 
     -- * Formatting
-    formatRelativeTime,
-    formatSeconds,
+    formatRelativeTimeLong,
+    formatRelativeTimeShort,
+    formatSecondsLong,
+    formatSecondsShort,
   )
 where
 
-import Control.Applicative (Alternative (..))
+import Control.Applicative (Alternative ((<|>)))
 import Control.DeepSeq (NFData)
 import Data.Bounds (LowerBounded (lowerBound), UpperBoundless)
 import Data.Foldable (foldl')
@@ -34,21 +36,22 @@ import Data.List qualified as L
 import GHC.Generics (Generic)
 import GHC.Natural (Natural)
 import GHC.Read qualified as GRead
+import GHC.Show qualified as GRead
 import Numeric.Algebra
-  ( AMonoid (..),
-    ASemigroup (..),
-    MSemiSpace (..),
-    MSpace (..),
+  ( AMonoid (zero),
+    ASemigroup ((.+.)),
+    MSemiSpace ((.*)),
+    MSpace ((.%)),
     Semimodule,
     SemivectorSpace,
   )
-import Numeric.Literal.Integer (FromInteger (..))
-import Optics.Core (A_Lens, Iso', LabelOptic (..), iso, lens)
+import Numeric.Literal.Integer (FromInteger (afromInteger))
+import Optics.Core (A_Lens, Iso', LabelOptic (labelOptic), iso, lens)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
-import Text.Read (Read (..))
-import Text.Read.Lex (Lexeme (..))
+import Text.Read (Read (readPrec))
+import Text.Read.Lex (Lexeme (Ident, Punc))
 
 -- $setup
 -- >>> import Numeric.Algebra.Additive.AMonoid (AMonoid (zero))
@@ -370,37 +373,68 @@ fromString str =
     read' = readTimeStr +++ readSeconds <* RPC.lift RP.skipSpaces
 {-# INLINEABLE fromString #-}
 
--- | Formats a 'RelativeTime' to string.
+-- | Formats a 'RelativeTime' to a long string.
 --
 -- ==== __Examples__
 --
--- >>> formatRelativeTime $ MkRelativeTime 1 2 0 3
+-- >>> formatRelativeTimeLong $ MkRelativeTime 1 2 0 3
 -- "1 day, 2 hours, 3 seconds"
 --
 -- @since 0.1
-formatRelativeTime :: RelativeTime -> String
-formatRelativeTime (MkRelativeTime 0 0 0 0) = "0 seconds"
-formatRelativeTime (MkRelativeTime d h m s) = L.intercalate ", " vals
+formatRelativeTimeLong :: RelativeTime -> String
+formatRelativeTimeLong (MkRelativeTime 0 0 0 0) = "0 seconds"
+formatRelativeTimeLong (MkRelativeTime d h m s) = L.intercalate ", " vals
   where
     f acc (n, units)
       | n == 0 = acc
       | otherwise = pluralize n units : acc
     vals = foldl' f [] [(s, " second"), (m, " minute"), (h, " hour"), (d, " day")]
-{-# INLINEABLE formatRelativeTime #-}
+{-# INLINEABLE formatRelativeTimeLong #-}
 
--- | For \(n \ge 0\) seconds, returns a string description of the days, hours,
--- minutes and seconds.
+-- | Formats a 'RelativeTime' to a short string.
 --
 -- ==== __Examples__
 --
--- >>> formatSeconds 3623
+-- >>> formatRelativeTimeShort $ MkRelativeTime 123 22 0 3
+-- "123:22:00:03"
+--
+-- @since 0.1
+formatRelativeTimeShort :: RelativeTime -> String
+formatRelativeTimeShort (MkRelativeTime d h m s) = L.intercalate ":" vals
+  where
+    f acc n
+      | n < 10 = ('0' : show n) : acc
+      | otherwise = show n : acc
+    vals = foldl' f [] [s, m, h, d]
+{-# INLINEABLE formatRelativeTimeShort #-}
+
+-- | For \(n \ge 0\) seconds, returns a long string description of the days,
+-- hours, minutes and seconds.
+--
+-- ==== __Examples__
+--
+-- >>> formatSecondsLong 3623
 -- "1 hour, 23 seconds"
 --
 --
 -- @since 0.1
-formatSeconds :: Natural -> String
-formatSeconds = formatRelativeTime . fromSeconds
-{-# INLINEABLE formatSeconds #-}
+formatSecondsLong :: Natural -> String
+formatSecondsLong = formatRelativeTimeLong . fromSeconds
+{-# INLINEABLE formatSecondsLong #-}
+
+-- | For \(n \ge 0\) seconds, returns a short string description of the days,
+-- hours, minutes and seconds.
+--
+-- ==== __Examples__
+--
+-- >>> formatSecondsShort 3623
+-- "00:01:00:23"
+--
+--
+-- @since 0.1
+formatSecondsShort :: Natural -> String
+formatSecondsShort = formatRelativeTimeShort . fromSeconds
+{-# INLINEABLE formatSecondsShort #-}
 
 pluralize :: Natural -> String -> String
 pluralize n txt
@@ -424,7 +458,7 @@ secondsInMinute = 60
 
 readRecord :: ReadPrec RelativeTime
 readRecord = GRead.parens $
-  RPC.prec 11 $ do
+  RPC.prec GRead.appPrec1 $ do
     GRead.expectP (Ident "MkRelativeTime")
     GRead.expectP (Punc "{")
     d <- GRead.readField "days" (RPC.reset GRead.readPrec)
