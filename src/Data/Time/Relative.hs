@@ -20,10 +20,18 @@ module Data.Time.Relative
     fromString,
 
     -- * Formatting
-    formatRelativeTimeLong,
-    formatRelativeTimeShort,
-    formatSecondsLong,
-    formatSecondsShort,
+    Format (..),
+    FormatStyle (..),
+    FormatVerbosity (..),
+    defaultFormat,
+    formatRelativeTime,
+    formatSeconds,
+
+    -- ** Optics
+    _FormatStyleDigital,
+    _FormatStyleProse,
+    _FormatVerbosityCompact,
+    _FormatVerbosityFull,
   )
 where
 
@@ -46,7 +54,7 @@ import Numeric.Algebra
     SemivectorSpace,
   )
 import Numeric.Literal.Integer (FromInteger (afromInteger))
-import Optics.Core (A_Lens, Iso', LabelOptic (labelOptic), iso, lens)
+import Optics.Core (A_Lens, Iso', LabelOptic (labelOptic), Prism', iso, lens, prism)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
 import Text.ParserCombinators.ReadPrec qualified as RPC
@@ -373,68 +381,214 @@ fromString str =
     read' = readTimeStr +++ readSeconds <* RPC.lift RP.skipSpaces
 {-# INLINEABLE fromString #-}
 
--- | Formats a 'RelativeTime' to a long string.
+-- | Formatting style.
+--
+-- @since 0.1
+data FormatStyle
+  = -- | 01:20:05:00
+    --
+    -- @since 0.1
+    FormatStyleDigital
+  | -- | 1 day, 20 hours, 5 minutes
+    --
+    -- @since 0.1
+    FormatStyleProse
+  deriving stock
+    ( -- | @since 0.1
+      Eq,
+      -- | @since 0.1
+      Show
+    )
+
+-- | @since 0.1
+_FormatStyleDigital :: Prism' FormatStyle ()
+_FormatStyleDigital = prism (const FormatStyleDigital) f
+  where
+    f FormatStyleDigital = Right ()
+    f other = Left other
+{-# INLINEABLE _FormatStyleDigital #-}
+
+-- | @since 0.1
+_FormatStyleProse :: Prism' FormatStyle ()
+_FormatStyleProse = prism (const FormatStyleProse) f
+  where
+    f FormatStyleProse = Right ()
+    f other = Left other
+{-# INLINEABLE _FormatStyleProse #-}
+
+-- | Formatting verbosity.
+--
+-- @since 0.1
+data FormatVerbosity
+  = -- | For 'FormatStyleProse', this omits zero fields. For
+    -- 'FormatStyleDigital', __leading__ zeroes are omitted.
+    --
+    -- @since 0.1
+    FormatVerbosityCompact
+  | -- | Formats all fields, including zeroes.
+    --
+    -- @since 0.1
+    FormatVerbosityFull
+  deriving stock
+    ( -- | @since 0.1
+      Eq,
+      -- | @since 0.1
+      Show
+    )
+
+-- | @since 0.1
+_FormatVerbosityCompact :: Prism' FormatVerbosity ()
+_FormatVerbosityCompact = prism (const FormatVerbosityCompact) f
+  where
+    f FormatVerbosityCompact = Right ()
+    f other = Left other
+{-# INLINEABLE _FormatVerbosityCompact #-}
+
+-- | @since 0.1
+_FormatVerbosityFull :: Prism' FormatVerbosity ()
+_FormatVerbosityFull = prism (const FormatVerbosityFull) f
+  where
+    f FormatVerbosityFull = Right ()
+    f other = Left other
+{-# INLINEABLE _FormatVerbosityFull #-}
+
+-- | Formatting configuration.
+--
+-- @since 0.1
+data Format = MkFormat
+  { -- | Formatting style.
+    --
+    -- @since 0.1
+    style :: !FormatStyle,
+    -- | Formatting verbosity.
+    --
+    -- @since 0.1
+    verbosity :: !FormatVerbosity
+  }
+  deriving stock
+    ( -- | @since 0.1
+      Eq,
+      -- | @since 0.1
+      Show
+    )
+
+-- | @since 0.1
+instance
+  ( k ~ A_Lens,
+    a ~ FormatStyle,
+    b ~ FormatStyle
+  ) =>
+  LabelOptic "style" k Format Format a b
+  where
+  labelOptic = lens style (\f s -> f {style = s})
+  {-# INLINEABLE labelOptic #-}
+
+-- | @since 0.1
+instance
+  ( k ~ A_Lens,
+    a ~ FormatVerbosity,
+    b ~ FormatVerbosity
+  ) =>
+  LabelOptic "verbosity" k Format Format a b
+  where
+  labelOptic = lens verbosity (\f v -> f {verbosity = v})
+  {-# INLINEABLE labelOptic #-}
+
+-- | Default format.
 --
 -- ==== __Examples__
 --
--- >>> formatRelativeTimeLong $ MkRelativeTime 1 2 0 3
--- "1 day, 2 hours, 3 seconds"
+-- >>> defaultFormat
+-- MkFormat {style = FormatStyleProse, verbosity = FormatVerbosityCompact}
 --
 -- @since 0.1
-formatRelativeTimeLong :: RelativeTime -> String
-formatRelativeTimeLong (MkRelativeTime 0 0 0 0) = "0 seconds"
-formatRelativeTimeLong (MkRelativeTime d h m s) = L.intercalate ", " vals
+defaultFormat :: Format
+defaultFormat =
+  MkFormat
+    { style = FormatStyleProse,
+      verbosity = FormatVerbosityCompact
+    }
+
+-- | Formats a relative time to a string.
+--
+-- ==== __Examples__
+--
+-- >>> let rt = MkRelativeTime 0 2 0 4
+-- >>> let fmtProse = MkFormat FormatStyleProse FormatVerbosityCompact
+-- >>> let fmtDigital = MkFormat FormatStyleDigital FormatVerbosityCompact
+-- >>> formatRelativeTime fmtProse rt
+-- "2 hours, 4 seconds"
+--
+-- >>> formatRelativeTime (fmtProse {verbosity = FormatVerbosityFull}) rt
+-- "0 days, 2 hours, 0 minutes, 4 seconds"
+--
+-- >>> formatRelativeTime fmtDigital rt
+-- "02:00:04"
+--
+-- >>> formatRelativeTime (fmtDigital {verbosity = FormatVerbosityFull}) rt
+-- "00:02:00:04"
+formatRelativeTime :: Format -> RelativeTime -> String
+formatRelativeTime (MkFormat FormatStyleDigital v) = formatDigital v
+formatRelativeTime (MkFormat FormatStyleProse v) = formatProse v
+{-# INLINEABLE formatRelativeTime #-}
+
+formatProse :: FormatVerbosity -> RelativeTime -> String
+formatProse FormatVerbosityCompact (MkRelativeTime 0 0 0 0) = "0 seconds"
+formatProse FormatVerbosityFull (MkRelativeTime 0 0 0 0) = "0 days, 0 hours, 0 minutes, 0 seconds"
+formatProse v (MkRelativeTime d h m s) = L.intercalate ", " vals
   where
     f acc (n, units)
-      | n == 0 = acc
+      -- skip zeroes if compact
+      | v == FormatVerbosityCompact && n == 0 = acc
       | otherwise = pluralize n units : acc
     vals = foldl' f [] [(s, " second"), (m, " minute"), (h, " hour"), (d, " day")]
-{-# INLINEABLE formatRelativeTimeLong #-}
+{-# INLINEABLE formatProse #-}
 
--- | Formats a 'RelativeTime' to a short string.
---
--- ==== __Examples__
---
--- >>> formatRelativeTimeShort $ MkRelativeTime 123 22 0 3
--- "123:22:00:03"
---
--- @since 0.1
-formatRelativeTimeShort :: RelativeTime -> String
-formatRelativeTimeShort (MkRelativeTime d h m s) = L.intercalate ":" vals
+formatDigital :: FormatVerbosity -> RelativeTime -> String
+formatDigital FormatVerbosityCompact (MkRelativeTime 0 0 0 0) = "00"
+formatDigital FormatVerbosityFull (MkRelativeTime 0 0 0 0) = "00:00:00:00"
+formatDigital v (MkRelativeTime d h m s) = case v of
+  FormatVerbosityCompact -> L.intercalate ":" (reverse $ snd valsNoZeroes)
+  FormatVerbosityFull -> L.intercalate ":" valsFixed
   where
-    f acc n
+    formatNoLeadingZeroes (foundNonZero, acc) n
+      -- skip leading zeroes
+      | n == 0 =
+          if foundNonZero
+            then (True, "00" : acc)
+            else (False, acc)
+      | n < 10 = (True, ('0' : show n) : acc)
+      | otherwise = (True, show n : acc)
+
+    format acc n
+      | n == 0 = "00" : acc
       | n < 10 = ('0' : show n) : acc
       | otherwise = show n : acc
-    vals = foldl' f [] [s, m, h, d]
-{-# INLINEABLE formatRelativeTimeShort #-}
 
--- | For \(n \ge 0\) seconds, returns a long string description of the days,
+    -- Notice that the array orders in these two are different. Ordinarily, we
+    -- want [s, m, h, d] (reversed) as foldl' will reverse the order.
+    --
+    -- For valsNoZeroes, however, we need to process in the real order as
+    -- stripping leading zeroes is easier than stripping trailing ones.
+    --
+    -- We do this rather than e.g. using foldr to keep the strictness
+    -- properties the same.
+    valsNoZeroes = foldl' formatNoLeadingZeroes (False, []) [d, h, m, s]
+    valsFixed = foldl' format [] [s, m, h, d]
+{-# INLINEABLE formatDigital #-}
+
+-- | For \(n \ge 0\) seconds, returns a string description of the days,
 -- hours, minutes and seconds.
 --
 -- ==== __Examples__
 --
--- >>> formatSecondsLong 3623
+-- >>> formatSeconds defaultFormat 3623
 -- "1 hour, 23 seconds"
 --
 --
 -- @since 0.1
-formatSecondsLong :: Natural -> String
-formatSecondsLong = formatRelativeTimeLong . fromSeconds
-{-# INLINEABLE formatSecondsLong #-}
-
--- | For \(n \ge 0\) seconds, returns a short string description of the days,
--- hours, minutes and seconds.
---
--- ==== __Examples__
---
--- >>> formatSecondsShort 3623
--- "00:01:00:23"
---
---
--- @since 0.1
-formatSecondsShort :: Natural -> String
-formatSecondsShort = formatRelativeTimeShort . fromSeconds
-{-# INLINEABLE formatSecondsShort #-}
+formatSeconds :: Format -> Natural -> String
+formatSeconds fmt = formatRelativeTime fmt . fromSeconds
 
 pluralize :: Natural -> String -> String
 pluralize n txt
