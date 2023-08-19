@@ -212,9 +212,9 @@ testDiff =
       let result = Relative.diffRelativeTime r1 r2
       H.annotateShow result
       if
-          | r1 > r2 -> r1 === r2 .+. result
-          | r2 > r1 -> r2 === r1 .+. result
-          | otherwise -> zero === result
+        | r1 > r2 -> r1 === r2 .+. result
+        | r2 > r1 -> r2 === r1 .+. result
+        | otherwise -> zero === result
 
 testReadShowId :: TestTree
 testReadShowId =
