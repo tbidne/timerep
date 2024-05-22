@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 -- | Provides the 'RelativeTime' type and related functions for representing
@@ -38,7 +39,9 @@ where
 import Control.Applicative (Alternative ((<|>)))
 import Control.DeepSeq (NFData)
 import Data.Bounds (LowerBounded (lowerBound), UpperBoundless)
+#if !MIN_VERSION_base(4, 20, 0)
 import Data.Foldable (foldl')
+#endif
 import Data.Kind (Type)
 import Data.List qualified as L
 import GHC.Generics (Generic)

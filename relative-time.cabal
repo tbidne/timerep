@@ -4,7 +4,13 @@ version:            0.1
 license:            MIT
 license-file:       LICENSE
 tested-with:
-  GHC ==8.10.7 || ==9.0.2 || ==9.2.8 || ==9.4.8 || ==9.6.5 || ==9.8.2
+  GHC ==8.10.7
+   || ==9.0.2
+   || ==9.2.8
+   || ==9.4.8
+   || ==9.6.5
+   || ==9.8.2
+   || ==9.10.1
 
 copyright:          2022-2024 Thomas Bidne
 author:             Thomas Bidne
@@ -50,7 +56,7 @@ library
   exposed-modules:  Data.Time.Relative
   build-depends:
     , algebra-simple  ^>=0.1
-    , base            >=4.14.0.0 && <4.20
+    , base            >=4.14.0.0 && <4.21
     , bounds          ^>=0.1
     , deepseq         >=1.4.4.0  && <1.6
     , optics-core     ^>=0.4
