@@ -20,9 +20,9 @@ jobs:
           - "8.10.7"
           - "9.0.2"
           - "9.2.8"
-          - "9.4.7"
-          - "9.6.3"
-          - "9.8.1"
+          - "9.4.8"
+          - "9.6.5"
+          - "9.8.2"
         platform:
           - os: "macos-latest"
             set-env: "export"
@@ -30,9 +30,12 @@ jobs:
             set-env: "export"
           - os: "windows-latest"
             set-env: "set"
+        exclude:
+          - {ghc: "8.10.7", platform: {os: "macos-latest", set-env: "export"}}
+          - {ghc: "9.0.2", platform: {os: "macos-latest", set-env: "export"}}
     runs-on: ${{ matrix.platform.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: haskell-actions/setup@v2
         with:
@@ -62,28 +65,26 @@ jobs:
         - "ubuntu-latest"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup nix
-        uses: cachix/install-nix-action@v22
+        uses: cachix/install-nix-action@v25
         with:
-          nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/897876e4c484f1e8f92009fd11b7d988a121a4e7.tar.gz
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Compile & Test
         run: nix build
   lint:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup nix
-        uses: cachix/install-nix-action@v22
+        uses: cachix/install-nix-action@v25
         with:
-          nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/897876e4c484f1e8f92009fd11b7d988a121a4e7.tar.gz
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Formatting
         run: |
