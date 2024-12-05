@@ -56,7 +56,7 @@ import Numeric.Algebra
     Semimodule,
     SemivectorSpace,
   )
-import Numeric.Literal.Integer (FromInteger (afromInteger))
+import Numeric.Literal.Integer (FromInteger (fromZ), ToInteger (toZ))
 import Optics.Core (A_Lens, Iso', LabelOptic (labelOptic), Prism', iso, lens, prism)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
@@ -202,7 +202,11 @@ instance UpperBoundless RelativeTime
 --
 -- @since 0.1
 instance FromInteger RelativeTime where
-  afromInteger = fromSeconds . fromInteger
+  fromZ = fromSeconds . fromInteger @Natural
+
+-- | @since 0.1
+instance ToInteger RelativeTime where
+  toZ = toInteger . toSeconds
 
 -- | @since 0.1
 instance ASemigroup RelativeTime where
