@@ -53,7 +53,7 @@ import Numeric.Algebra
     ASemigroup ((.+.)),
     MSemiSpace ((.*)),
     MSpace ((.%)),
-    MetricSpace (diff),
+    MetricSpace (diffR),
     Semimodule,
     SemivectorSpace,
   )
@@ -238,7 +238,7 @@ instance SemivectorSpace RelativeTime Natural
 
 -- | @since 0.1
 instance MetricSpace RelativeTime where
-  diff x y = toSeconds x `diff` toSeconds y
+  diffR x y = toSeconds x `diffR` toSeconds y
 
 -- | Isomorphism between 'Natural' seconds and 'RelativeTime'.
 --
