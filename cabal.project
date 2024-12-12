@@ -10,7 +10,7 @@ package relative-time
 source-repository-package
   type: git
   location: https://github.com/tbidne/algebra-simple.git
-  tag: 60e38a75219ecb7c9efae06570acf71a2e04a358
+  tag: fcbef32cab64b38b3f8f2908e7b2b527fe6c064d
 
 source-repository-package
   type: git
