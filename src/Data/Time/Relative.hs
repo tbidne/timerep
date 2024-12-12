@@ -57,7 +57,9 @@ import Numeric.Algebra
     Semimodule,
     SemivectorSpace,
   )
-import Numeric.Literal.Integer (FromInteger (fromZ), ToInteger (toZ))
+import Numeric.Convert.Integer (FromInteger (fromZ), ToInteger (toZ))
+import Numeric.Convert.Rational (ToRational (toQ))
+import Numeric.Convert.Real (ToReal (toR))
 import Optics.Core (A_Lens, Iso', LabelOptic (labelOptic), Prism', iso, lens, prism)
 import Text.ParserCombinators.ReadP qualified as RP
 import Text.ParserCombinators.ReadPrec (ReadPrec, (+++))
@@ -208,6 +210,14 @@ instance FromInteger RelativeTime where
 -- | @since 0.1
 instance ToInteger RelativeTime where
   toZ = toInteger . toSeconds
+
+-- | @since 0.1
+instance ToRational RelativeTime where
+  toQ = toQ . toSeconds
+
+-- | @since 0.1
+instance ToReal RelativeTime where
+  toR = toR . toSeconds
 
 -- | @since 0.1
 instance ASemigroup RelativeTime where
