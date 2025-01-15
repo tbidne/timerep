@@ -23,9 +23,8 @@ description:
   relative time in terms of days, hours, minutes, and seconds.
 
 category:           Time
-extra-source-files:
-  CHANGELOG.md
-  README.md
+extra-source-files: README.md
+extra-doc-files:    CHANGELOG.md
 
 source-repository head
   type:     git
